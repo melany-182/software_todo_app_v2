@@ -9,12 +9,33 @@ class LabelsCubit extends Cubit<LabelsState> {
           selectedLabel: 'Trabajo',
         )); // valores iniciales
 
+  // método para cambiar el valor seleccionado en el dropdown button
+  void selectLabel(String? selectedLabel) {
+    List<String>? labels = state.labels;
+    emit(LabelsState(
+      labels: labels,
+      selectedLabel: selectedLabel,
+    ));
+  }
+
   void addLabel(String newLabel, String selectedLabel) {
-    final labels = state.labels;
+    List<String>? labels = state.labels;
     labels!.add(newLabel);
     emit(LabelsState(
       labels: labels,
       selectedLabel: selectedLabel,
+    ));
+  }
+
+  // TODO: implementar este método
+  void editLabel(String labelToEdit, String newLabel) {}
+
+  void deleteLabel(String labelToDelete, String selectedLabel) {
+    List<String>? labels = state.labels;
+    labels!.remove(labelToDelete);
+    emit(LabelsState(
+      labels: labels,
+      selectedLabel: labels.isNotEmpty ? labels[0] : '',
     ));
   }
 }

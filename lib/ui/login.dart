@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:software_todo_app_v2/ui/menu.dart';
 
 class Login extends StatelessWidget {
   Login({Key? key}) : super(key: key);
@@ -63,14 +64,12 @@ class Login extends StatelessWidget {
             ElevatedButton(
               // función que se ejecutará al apretar el botón Ingresar, invocará al menú principal
               onPressed: () {
-                /*
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => Menu(),
                   ),
                 );
-                */
               },
               child: const Text('Ingresar'),
             ),

@@ -2,7 +2,7 @@ class Task {
   String id;
   String name;
   String deadline;
-  String label; // *
+  String label;
   String state;
 
   Task({
@@ -13,43 +13,48 @@ class Task {
     this.state = '',
   });
 
-  getTaskId() {
+  getId() {
     return id;
   }
 
-  setTaskId(String id) {
+  setId(String id) {
     this.id = id;
   }
 
-  getTaskName() {
+  getName() {
     return name;
   }
 
-  setTaskName(String name) {
+  setName(String name) {
     this.name = name;
   }
 
-  getTaskDeadline() {
+  getDeadline() {
     return deadline;
   }
 
-  setTaskDeadline(String deadline) {
+  setDeadline(String deadline) {
     this.deadline = deadline;
   }
 
-  getTaskLabel() {
+  getLabel() {
     return label;
   }
 
-  setTaskLabel(String label) {
+  setLabel(String label) {
     this.label = label;
   }
 
-  getTaskState() {
+  getState() {
     return state;
   }
 
-  setTaskState(String state) {
+  setState(String state) {
     this.state = state;
+  }
+
+  @override
+  String toString() {
+    return 'Task{id: $id, name: $name, deadline: $deadline, label: $label, state: $state}';
   }
 }

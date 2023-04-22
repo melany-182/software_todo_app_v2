@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:software_todo_app_v2/bloc/labels_cubit.dart';
 import 'package:software_todo_app_v2/bloc/tasks_cubit.dart';
+import 'package:software_todo_app_v2/ui/add_task.dart';
 import 'package:software_todo_app_v2/ui/login.dart';
+import 'package:software_todo_app_v2/ui/menu.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,7 +29,8 @@ class MyApp extends StatelessWidget {
         initialRoute: '/login',
         routes: {
           '/login': (context) => Login(),
-          // '/menu': (context) => Menu(),
+          '/menu': (context) => Menu(),
+          '/add_task': (context) => AddTask(),
         },
         debugShowCheckedModeBanner: false,
       ),

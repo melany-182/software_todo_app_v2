@@ -7,8 +7,19 @@ class TasksCubit extends Cubit<TasksState> {
   TasksCubit() : super(TasksState(tasks: []));
 
   void addTask(Task newTask) {
-    final tasks = state.tasks;
+    List<Task> tasks = state.tasks;
     tasks.add(newTask);
+    emit(TasksState(tasks: tasks));
+  }
+
+  void changeTaskState(Task taskToChange) {
+    List<Task> tasks = state.tasks;
+    int index = tasks.indexOf(taskToChange);
+    if (tasks[index].getState() == 'Pendiente') {
+      tasks[index].setState('Completada');
+    } else {
+      tasks[index].setState('Pendiente');
+    }
     emit(TasksState(tasks: tasks));
   }
 }
