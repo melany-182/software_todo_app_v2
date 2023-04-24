@@ -6,18 +6,12 @@ import 'package:software_todo_app_v2/bloc/labels_cubit.dart';
 import 'package:software_todo_app_v2/bloc/labels_state.dart';
 import 'package:software_todo_app_v2/bloc/tasks_cubit.dart';
 import 'package:software_todo_app_v2/models/task_model.dart';
-import 'package:software_todo_app_v2/ui/menu.dart';
 
 class AddTask extends StatelessWidget {
   AddTask({Key? key}) : super(key: key);
 
   final taskNameInput = TextEditingController();
   final deadlineInput = TextEditingController();
-
-  void dispose() {
-    taskNameInput.dispose();
-    deadlineInput.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +23,7 @@ class AddTask extends StatelessWidget {
         padding: const EdgeInsets.all(25),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: [
             TextField(
               controller: taskNameInput,
               decoration: const InputDecoration(
@@ -52,7 +46,6 @@ class AddTask extends StatelessWidget {
                     initialDate: DateTime.now(),
                     firstDate: DateTime(2000),
                     lastDate: DateTime(2101));
-
                 if (pickedDate != null) {
                   String formattedDate =
                       DateFormat('dd-MM-yyyy').format(pickedDate);
@@ -80,14 +73,15 @@ class AddTask extends StatelessWidget {
                         BlocProvider.of<LabelsCubit>(context)
                             .selectLabel(newValue);
                       },
-                      focusColor: Colors.white,
-                      items: state.labels!
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
+                      focusColor: const Color.fromARGB(255, 250, 250, 250),
+                      items: state.labels!.map<DropdownMenuItem<String>>(
+                        (String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        },
+                      ).toList(),
                     );
                   },
                 ),
@@ -110,12 +104,11 @@ class AddTask extends StatelessWidget {
         padding: const EdgeInsets.all(25),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: [
             ElevatedButton(
               // función que se ejecutará al apretar el botón Cancelar, invocará al menú principal sin guardar la tarea
               onPressed: () {
-                Navigator.pop(
-                    context, MaterialPageRoute(builder: (context) => Menu()));
+                Navigator.pop(context);
               },
               child: const Text('Cancelar'),
             ),
@@ -124,7 +117,7 @@ class AddTask extends StatelessWidget {
               // función que se ejecutará al apretar el botón Guardar, invocará al menú principal + guardará la tarea
               onPressed: () {
                 if (taskNameInput.text != "" && deadlineInput.text != "") {
-                  // si el nombre de la tarea y la fecha de cumplimiento no están vacíos
+                  // si el nombre de la tarea y la fecha de cumplimiento no están vacíos // TODO: considerar que el dropdown no tenga un valor seleccionado
                   Random random = Random();
                   int id = random.nextInt(
                       1000000); // genera un número aleatorio entre 0 y 999999 (para el id)
@@ -141,9 +134,8 @@ class AddTask extends StatelessWidget {
                   );
                   BlocProvider.of<TasksCubit>(context).addTask(newtask);
                   debugPrint(
-                      "Tarea guardada!. Lista de tareas actualizada: ${BlocProvider.of<TasksCubit>(context).state.tasks.toString()}");
-                  Navigator.pop(
-                      context, MaterialPageRoute(builder: (context) => Menu()));
+                      "Tarea guardada! Lista de tareas actualizada: ${BlocProvider.of<TasksCubit>(context).state.tasks.toString()}");
+                  Navigator.pop(context);
                 } else {
                   showDialog(
                     context: context,
@@ -158,8 +150,8 @@ class AddTask extends StatelessWidget {
                           TextButton(
                             child: const Text("OK"),
                             onPressed: () {
-                              Navigator.of(context)
-                                  .pop(); // cierra el diálogo emergente
+                              Navigator.pop(
+                                  context); // cierra el diálogo emergente
                             },
                           ),
                         ],

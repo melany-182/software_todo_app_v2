@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/login',
         routes: {
           '/login': (context) => Login(),
-          '/menu': (context) => Menu(),
+          '/menu': (context) => const Menu(),
           '/add_task': (context) => AddTask(),
         },
         debugShowCheckedModeBanner: false,

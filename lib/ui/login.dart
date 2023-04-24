@@ -7,11 +7,6 @@ class Login extends StatelessWidget {
   final usernameInput = TextEditingController();
   final passwordInput = TextEditingController();
 
-  void dispose() {
-    usernameInput.dispose();
-    passwordInput.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +17,7 @@ class Login extends StatelessWidget {
         padding: const EdgeInsets.all(25),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: [
             Image.asset(
               'images/todo_icon.png',
               height: 250,
@@ -60,14 +55,14 @@ class Login extends StatelessWidget {
         padding: const EdgeInsets.all(25),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: [
             ElevatedButton(
               // función que se ejecutará al apretar el botón Ingresar, invocará al menú principal
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Menu(),
+                    builder: (context) => const Menu(),
                   ),
                 );
               },
