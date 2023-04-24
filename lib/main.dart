@@ -4,6 +4,7 @@ import 'package:software_todo_app_v2/bloc/labels_cubit.dart';
 import 'package:software_todo_app_v2/bloc/tasks_cubit.dart';
 import 'package:software_todo_app_v2/ui/add_task.dart';
 import 'package:software_todo_app_v2/ui/login.dart';
+import 'package:software_todo_app_v2/ui/manage_labels.dart';
 import 'package:software_todo_app_v2/ui/menu.dart';
 
 void main() {
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
           '/login': (context) => Login(),
           '/menu': (context) => const Menu(),
           '/add_task': (context) => AddTask(),
+          '/manage_labels': (context) => ManageLabels(),
         },
         debugShowCheckedModeBanner: false,
       ),

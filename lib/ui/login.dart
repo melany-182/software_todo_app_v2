@@ -35,18 +35,20 @@ class Login extends StatelessWidget {
             TextField(
               controller: usernameInput,
               decoration: const InputDecoration(
+                icon: Icon(Icons.person),
                 border: OutlineInputBorder(),
                 labelText: 'Usuario',
               ),
             ),
             const SizedBox(height: 15),
             TextField(
-              obscureText: true,
               controller: passwordInput,
               decoration: const InputDecoration(
+                icon: Icon(Icons.lock),
                 border: OutlineInputBorder(),
                 labelText: 'Contraseña',
               ),
+              obscureText: true,
             ),
           ],
         ),

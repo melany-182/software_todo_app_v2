@@ -6,6 +6,7 @@ import 'package:software_todo_app_v2/bloc/labels_cubit.dart';
 import 'package:software_todo_app_v2/bloc/labels_state.dart';
 import 'package:software_todo_app_v2/bloc/tasks_cubit.dart';
 import 'package:software_todo_app_v2/models/task_model.dart';
+import 'package:software_todo_app_v2/ui/manage_labels.dart';
 
 class AddTask extends StatelessWidget {
   AddTask({Key? key}) : super(key: key);
@@ -28,14 +29,16 @@ class AddTask extends StatelessWidget {
               controller: taskNameInput,
               decoration: const InputDecoration(
                 icon: Icon(Icons.assignment),
+                border: OutlineInputBorder(),
                 labelText: 'Nombre de la tarea',
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
             TextField(
               controller: deadlineInput,
               decoration: const InputDecoration(
                 icon: Icon(Icons.calendar_today),
+                border: OutlineInputBorder(),
                 labelText: 'Fecha de cumplimiento',
               ),
               readOnly: true,
@@ -55,33 +58,53 @@ class AddTask extends StatelessWidget {
                 }
               },
             ),
-            const SizedBox(height: 40),
-            const Text(
-              'Etiqueta:',
-              style: TextStyle(fontSize: 15),
+            const SizedBox(height: 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: const [
+                Text(
+                  'Etiqueta:',
+                  style: TextStyle(fontSize: 15),
+                ),
+              ],
             ),
+            const SizedBox(height: 15),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 BlocBuilder<LabelsCubit, LabelsState>(
                   builder: (context, state) {
                     String? selectedLabel = state.selectedLabel;
-                    return DropdownButton<String>(
-                      hint: const Text('Seleccionar etiqueta'),
-                      value: state.labels!.isNotEmpty ? selectedLabel : null,
-                      onChanged: (newValue) {
-                        BlocProvider.of<LabelsCubit>(context)
-                            .selectLabel(newValue);
-                      },
-                      focusColor: const Color.fromARGB(255, 250, 250, 250),
-                      items: state.labels!.map<DropdownMenuItem<String>>(
-                        (String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
+                    return Expanded(
+                      child: DropdownButtonFormField<String>(
+                        hint: const Text('Seleccionar etiqueta'),
+                        dropdownColor: const Color.fromARGB(255, 250, 250, 250),
+                        focusColor: const Color.fromARGB(255, 250, 250, 250),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 10),
+                          border: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Colors.grey,
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                        ),
+                        value: state.labels!.isNotEmpty ? selectedLabel : null,
+                        onChanged: (newValue) {
+                          BlocProvider.of<LabelsCubit>(context)
+                              .selectLabel(newValue);
                         },
-                      ).toList(),
+                        items: state.labels!.map<DropdownMenuItem<String>>(
+                          (String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          },
+                        ).toList(),
+                      ),
                     );
                   },
                 ),
@@ -89,10 +112,15 @@ class AddTask extends StatelessWidget {
                 IconButton(
                   // función que se ejecutará al apretar el botón Editar, invocará a la gestión de etiquetas
                   icon: const Icon(Icons.edit),
-                  padding: const EdgeInsets.all(0),
+                  iconSize: 30,
+                  padding: const EdgeInsets.only(left: 7.5),
                   onPressed: () {
-                    Navigator.pushNamed(
-                        context, '/manage_labels'); // *** TODO: arreglar
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ManageLabels(),
+                      ),
+                    );
                   },
                 ),
               ],
