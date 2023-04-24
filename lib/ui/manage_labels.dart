@@ -6,7 +6,9 @@ import 'package:software_todo_app_v2/bloc/labels_state.dart';
 class ManageLabels extends StatelessWidget {
   ManageLabels({Key? key}) : super(key: key);
 
-  List<String> modifiedlabels = [];
+  Map<String, String> labelsToModify =
+      {}; // key: etiqueta antigua, value: etiqueta modificada
+  List<String> labelsToDelete = [];
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class ManageLabels extends StatelessWidget {
                 itemCount:
                     BlocProvider.of<LabelsCubit>(context).state.labels!.length,
                 itemBuilder: (context, index) {
-                  final actualLabel = state.labels![index];
+                  String actualLabel = state.labels![index];
                   return Padding(
                     padding: const EdgeInsets.only(top: 15),
                     child: Row(
@@ -35,15 +37,24 @@ class ManageLabels extends StatelessWidget {
                               labelText: 'Etiqueta',
                               border: OutlineInputBorder(),
                             ),
-                            //onChanged: (newValue) => _cubit.updateData(index, newValue),
+                            onChanged: (newLabel) {
+                              labelsToModify[actualLabel] = newLabel;
+                              debugPrint(
+                                  "Etiquetas a modificar: $labelsToModify"
+                                      .toString());
+                            },
                           ),
                         ),
                         const SizedBox(width: 15),
                         IconButton(
                           icon: const Icon(Icons.delete),
                           iconSize: 30,
-                          padding: const EdgeInsets.only(left: 5),
-                          onPressed: () {},
+                          padding: const EdgeInsets.only(left: 7.5),
+                          onPressed: () {
+                            labelsToDelete.add(actualLabel);
+                            debugPrint("Etiquetas a eliminar: $labelsToDelete"
+                                .toString());
+                          },
                         ),
                       ],
                     ),

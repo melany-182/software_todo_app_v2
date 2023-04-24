@@ -28,7 +28,7 @@ class LabelsCubit extends Cubit<LabelsState> {
   }
 
   // TODO: implementar este método
-  void editLabel(String labelToEdit, String newLabel) {}
+  void modifyLabel(String labelToEdit, String newLabel) {}
 
   void deleteLabel(String labelToDelete, String selectedLabel) {
     List<String>? labels = state.labels;
