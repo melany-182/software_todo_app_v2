@@ -171,7 +171,7 @@ class AddTask extends StatelessWidget {
                       return AlertDialog(
                         title: const Text("Error."),
                         content: const Text(
-                            "No se puede guardar la tarea porque no se ha especificado la descripción o la fecha de cumplimiento de la misma.",
+                            'No se puede guardar la tarea porque no se ha especificado la descripción o la fecha de cumplimiento de la misma.',
                             style: TextStyle(fontSize: 15),
                             textAlign: TextAlign.justify),
                         actions: [

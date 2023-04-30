@@ -19,7 +19,7 @@ class Login extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'images/todo_icon.png',
+              'assets/images/todo_icon.png',
               height: 250,
             ),
             const SizedBox(height: 30), // deja un espacio

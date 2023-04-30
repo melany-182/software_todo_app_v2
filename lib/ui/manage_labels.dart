@@ -4,11 +4,7 @@ import 'package:software_todo_app_v2/bloc/labels_cubit.dart';
 import 'package:software_todo_app_v2/bloc/labels_state.dart';
 
 class ManageLabels extends StatelessWidget {
-  ManageLabels({Key? key}) : super(key: key);
-
-  Map<String, String> labelsToModify =
-      {}; // key: etiqueta antigua, value: etiqueta modificada
-  List<String> labelsToDelete = [];
+  const ManageLabels({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +34,11 @@ class ManageLabels extends StatelessWidget {
                               border: OutlineInputBorder(),
                             ),
                             onChanged: (newLabel) {
-                              labelsToModify[actualLabel] = newLabel;
+                              BlocProvider.of<LabelsCubit>(context)
+                                  .state
+                                  .labelsToModify?[actualLabel] = newLabel;
                               debugPrint(
-                                  "Etiquetas a modificar: $labelsToModify"
-                                      .toString());
+                                  "Etiquetas a modificar: ${BlocProvider.of<LabelsCubit>(context).state.labelsToModify.toString()}");
                             },
                           ),
                         ),
@@ -51,9 +48,14 @@ class ManageLabels extends StatelessWidget {
                           iconSize: 30,
                           padding: const EdgeInsets.only(left: 7.5),
                           onPressed: () {
-                            labelsToDelete.add(actualLabel);
-                            debugPrint("Etiquetas a eliminar: $labelsToDelete"
-                                .toString());
+                            /*
+                            BlocProvider.of<LabelsCubit>(context)
+                                .state
+                                .labelsToDelete
+                                ?.add(actualLabel);
+                            debugPrint(
+                                "Etiquetas a eliminar: ${BlocProvider.of<LabelsCubit>(context).state.labelsToDelete.toString()}");
+                            */
                           },
                         ),
                       ],
@@ -80,6 +82,10 @@ class ManageLabels extends StatelessWidget {
             ElevatedButton(
               // función que se ejecutará al apretar el botón Cerrar, invocará a la página de añadir tarea sin guardar ningún cambio
               onPressed: () {
+                BlocProvider.of<LabelsCubit>(context).state.labelsToModify = {};
+
+                debugPrint(
+                    "Etiquetas actualizadas: ${BlocProvider.of<LabelsCubit>(context).state.labels.toString()}");
                 Navigator.pop(context);
               },
               child: const Text('Cerrar'),
@@ -98,6 +104,10 @@ class ManageLabels extends StatelessWidget {
               // función que se ejecutará al apretar el botón Nuevo, creará un nuevo campo de texto para añadir una nueva etiqueta
               onPressed: () {
                 // TODO: implementar la función de añadir nuevo campo de texto para nueva etiqueta
+                String selectedLabel =
+                    BlocProvider.of<LabelsCubit>(context).state.selectedLabel!;
+                BlocProvider.of<LabelsCubit>(context)
+                    .addLabel('Nueva etiqueta', selectedLabel);
               },
               child: const Text('Nuevo'),
             ),
