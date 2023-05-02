@@ -1,32 +1,34 @@
+import 'package:software_todo_app_v2/models/label_model.dart';
+
 class Task {
-  String id;
-  String name;
+  int taskId;
+  String description;
   String deadline;
-  String label;
+  Label? label;
   String state;
 
   Task({
-    this.id = '',
-    this.name = '',
+    this.taskId = 0,
+    this.description = '',
     this.deadline = '',
-    this.label = '',
+    this.label,
     this.state = '',
   });
 
-  getId() {
-    return id;
+  getTaskId() {
+    return taskId;
   }
 
-  setId(String id) {
-    this.id = id;
+  setTaskId(int taskId) {
+    this.taskId = taskId;
   }
 
-  getName() {
-    return name;
+  getDescription() {
+    return description;
   }
 
-  setName(String name) {
-    this.name = name;
+  setDescription(String description) {
+    this.description = description;
   }
 
   getDeadline() {
@@ -41,7 +43,7 @@ class Task {
     return label;
   }
 
-  setLabel(String label) {
+  setLabel(Label label) {
     this.label = label;
   }
 
@@ -55,6 +57,6 @@ class Task {
 
   @override
   String toString() {
-    return 'Task{id: $id, name: $name, deadline: $deadline, label: $label, state: $state}';
+    return 'Task{id: $taskId, name: $description, deadline: $deadline, label: $label, state: $state}';
   }
 }

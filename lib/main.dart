@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:software_todo_app_v2/bloc/labels_cubit.dart';
+import 'package:software_todo_app_v2/bloc/login_cubit.dart';
 import 'package:software_todo_app_v2/bloc/tasks_cubit.dart';
-import 'package:software_todo_app_v2/ui/add_task.dart';
-import 'package:software_todo_app_v2/ui/login.dart';
-import 'package:software_todo_app_v2/ui/manage_labels.dart';
-import 'package:software_todo_app_v2/ui/menu.dart';
+import 'package:software_todo_app_v2/ui/add_task_page.dart';
+import 'package:software_todo_app_v2/ui/login_page.dart';
+import 'package:software_todo_app_v2/ui/manage_labels_page.dart';
+import 'package:software_todo_app_v2/ui/menu_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<TasksCubit>(create: (context) => TasksCubit()),
         BlocProvider<LabelsCubit>(create: (context) => LabelsCubit()),
+        BlocProvider<LoginCubit>(create: (context) => LoginCubit()),
       ],
       child: MaterialApp(
         title: 'Software Todo App v2',
@@ -29,10 +31,10 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/login',
         routes: {
-          '/login': (context) => Login(),
-          '/menu': (context) => const Menu(),
-          '/add_task': (context) => AddTask(),
-          '/manage_labels': (context) => ManageLabels(),
+          '/login': (context) => LoginPage(),
+          '/menu': (context) => const MenuPage(),
+          '/add_task': (context) => AddTaskPage(),
+          '/manage_labels': (context) => const ManageLabelsPage(),
         },
         debugShowCheckedModeBanner: false,
       ),

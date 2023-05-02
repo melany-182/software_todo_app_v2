@@ -1,15 +1,15 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:software_todo_app_v2/bloc/labels_cubit.dart';
 import 'package:software_todo_app_v2/bloc/labels_state.dart';
 import 'package:software_todo_app_v2/bloc/tasks_cubit.dart';
+import 'package:software_todo_app_v2/models/label_model.dart';
 import 'package:software_todo_app_v2/models/task_model.dart';
-import 'package:software_todo_app_v2/ui/manage_labels.dart';
+import 'package:software_todo_app_v2/ui/manage_labels_page.dart';
 
-class AddTask extends StatelessWidget {
-  AddTask({Key? key}) : super(key: key);
+class AddTaskPage extends StatelessWidget {
+  AddTaskPage({Key? key}) : super(key: key);
 
   final taskNameInput = TextEditingController();
   final deadlineInput = TextEditingController();
@@ -97,10 +97,10 @@ class AddTask extends StatelessWidget {
                               .selectLabel(newValue);
                         },
                         items: state.labels!.map<DropdownMenuItem<String>>(
-                          (String value) {
+                          (Label value) {
                             return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
+                              value: value.getName(),
+                              child: Text(value.getName()),
                             );
                           },
                         ).toList(),
@@ -118,7 +118,7 @@ class AddTask extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ManageLabels(),
+                        builder: (context) => const ManageLabelsPage(),
                       ),
                     );
                   },
@@ -146,21 +146,28 @@ class AddTask extends StatelessWidget {
               onPressed: () {
                 if (taskNameInput.text != "" && deadlineInput.text != "") {
                   // si el nombre de la tarea y la fecha de cumplimiento no están vacíos // TODO: considerar que el dropdown no tenga un valor seleccionado
-                  Random random = Random();
-                  int id = random.nextInt(
-                      1000000); // genera un número aleatorio entre 0 y 999999 (para el id)
-                  Task newtask = Task(
-                    id: id.toString(),
-                    name: taskNameInput.text,
+                  int taskIdForNewTask =
+                      BlocProvider.of<TasksCubit>(context).state.tasks.length +
+                          1;
+                  int labelIdForNewTask = BlocProvider.of<LabelsCubit>(context)
+                      .findLabelByName(BlocProvider.of<LabelsCubit>(context)
+                          .state
+                          .selectedLabel!)
+                      .getLabelId();
+                  Task newTask = Task(
+                    taskId: taskIdForNewTask,
+                    description: taskNameInput.text,
                     deadline: deadlineInput.text,
-                    label: BlocProvider.of<LabelsCubit>(context)
-                        .state
-                        .selectedLabel
-                        .toString(),
+                    label: Label(
+                      labelId: labelIdForNewTask,
+                      name: BlocProvider.of<LabelsCubit>(context)
+                          .state
+                          .selectedLabel!,
+                    ),
                     state:
                         "Pendiente", // por defecto, la tarea se crea con estado "Pendiente"
                   );
-                  BlocProvider.of<TasksCubit>(context).addTask(newtask);
+                  BlocProvider.of<TasksCubit>(context).addTask(newTask);
                   debugPrint(
                       "Tarea guardada! Lista de tareas actualizada: ${BlocProvider.of<TasksCubit>(context).state.tasks.toString()}");
                   Navigator.pop(context);

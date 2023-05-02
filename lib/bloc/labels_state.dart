@@ -1,7 +1,9 @@
+import 'package:software_todo_app_v2/models/label_model.dart';
+
 class LabelsState {
-  List<String>? labels;
-  Map<String, String>? labelsToModify =
-      {}; // key: etiqueta antigua, value: etiqueta modificada // etiquetas a modificar en la pantalla de gestión de etiquetas
+  List<Label>? labels;
+  Map<int, String>? labelsToModify =
+      {}; // key: id etiqueta, value: valor nuevo de la etiqueta // etiquetas a modificar en la pantalla de gestión de etiquetas
   String? selectedLabel; // valor seleccionado en el dropdown button
 
   LabelsState({

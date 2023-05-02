@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:software_todo_app_v2/bloc/labels_cubit.dart';
 import 'package:software_todo_app_v2/bloc/labels_state.dart';
+import 'package:software_todo_app_v2/models/label_model.dart';
 
-class ManageLabels extends StatelessWidget {
-  const ManageLabels({Key? key}) : super(key: key);
+class ManageLabelsPage extends StatelessWidget {
+  const ManageLabelsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,22 +22,23 @@ class ManageLabels extends StatelessWidget {
                 itemCount:
                     BlocProvider.of<LabelsCubit>(context).state.labels!.length,
                 itemBuilder: (context, index) {
-                  String actualLabel = state.labels![index];
+                  Label actualLabel = state.labels![index];
                   return Padding(
                     padding: const EdgeInsets.only(top: 15),
                     child: Row(
                       children: [
                         Expanded(
                           child: TextFormField(
-                            initialValue: actualLabel,
+                            initialValue: actualLabel.getName(),
                             decoration: const InputDecoration(
                               labelText: 'Etiqueta',
                               border: OutlineInputBorder(),
                             ),
-                            onChanged: (newLabel) {
+                            onChanged: (modifiedValue) {
                               BlocProvider.of<LabelsCubit>(context)
-                                  .state
-                                  .labelsToModify?[actualLabel] = newLabel;
+                                      .state
+                                      .labelsToModify?[
+                                  actualLabel.getLabelId()] = modifiedValue;
                               debugPrint(
                                   "Etiquetas a modificar: ${BlocProvider.of<LabelsCubit>(context).state.labelsToModify.toString()}");
                             },
@@ -48,6 +50,12 @@ class ManageLabels extends StatelessWidget {
                           iconSize: 30,
                           padding: const EdgeInsets.only(left: 7.5),
                           onPressed: () {
+                            String? selectedLabel =
+                                BlocProvider.of<LabelsCubit>(context)
+                                    .state
+                                    .selectedLabel;
+                            BlocProvider.of<LabelsCubit>(context)
+                                .deleteLabel(actualLabel, selectedLabel);
                             /*
                             BlocProvider.of<LabelsCubit>(context)
                                 .state
@@ -104,10 +112,17 @@ class ManageLabels extends StatelessWidget {
               // función que se ejecutará al apretar el botón Nuevo, creará un nuevo campo de texto para añadir una nueva etiqueta
               onPressed: () {
                 // TODO: implementar la función de añadir nuevo campo de texto para nueva etiqueta
-                String selectedLabel =
+                String? selectedLabel =
                     BlocProvider.of<LabelsCubit>(context).state.selectedLabel!;
-                BlocProvider.of<LabelsCubit>(context)
-                    .addLabel('Nueva etiqueta', selectedLabel);
+                BlocProvider.of<LabelsCubit>(context).addLabel(
+                    Label(
+                        labelId: BlocProvider.of<LabelsCubit>(context)
+                                .state
+                                .labels!
+                                .length +
+                            1,
+                        name: 'Nueva etiqueta'),
+                    selectedLabel);
               },
               child: const Text('Nuevo'),
             ),

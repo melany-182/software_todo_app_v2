@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:software_todo_app_v2/bloc/tasks_cubit.dart';
 import 'package:software_todo_app_v2/bloc/tasks_state.dart';
-import 'package:software_todo_app_v2/ui/add_task.dart';
+import 'package:software_todo_app_v2/ui/add_task_page.dart';
 
-class Menu extends StatelessWidget {
-  const Menu({Key? key}) : super(key: key);
+class MenuPage extends StatelessWidget {
+  const MenuPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +67,7 @@ class Menu extends StatelessWidget {
                             BlocProvider.of<TasksCubit>(context)
                                 .state
                                 .tasks[index]
-                                .getName(),
+                                .getDescription(),
                             style: const TextStyle(fontSize: 17.5),
                           ),
                         ],
@@ -86,7 +86,8 @@ class Menu extends StatelessWidget {
                             BlocProvider.of<TasksCubit>(context)
                                 .state
                                 .tasks[index]
-                                .getLabel(),
+                                .getLabel()
+                                .getName(),
                             style: const TextStyle(fontSize: 15),
                           ),
                           Row(
@@ -150,7 +151,7 @@ class Menu extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AddTask(),
+                builder: (context) => AddTaskPage(),
               ),
             );
           },

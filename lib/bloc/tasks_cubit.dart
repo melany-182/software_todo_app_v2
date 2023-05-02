@@ -23,6 +23,7 @@ class TasksCubit extends Cubit<TasksState> {
     emit(TasksState(tasks: tasks));
   }
 
+  // esto no se usa
   void deleteTask(Task taskToDelete) {
     List<Task> tasks = state.tasks;
     tasks.remove(taskToDelete);
