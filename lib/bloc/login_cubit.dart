@@ -11,24 +11,26 @@ class LoginCubit extends Cubit<LoginState> {
     const storage = FlutterSecureStorage(); // para mantener los tokens seguros
     emit(state.copyWith(status: PageStatus.loading));
     try {
-      LoginResponseDto loginResponse = await LoginService.login(
-          username, password); // devuelve {token, refreshToken}
+      LoginResponseDto loginResponse = await LoginService()
+          .login(username, password); // devuelve {token, refreshToken}
       await storage.write(key: "Token", value: loginResponse.authToken);
       await storage.write(
-          key: "Refresh",
-          value: loginResponse
-              .refreshToken); // TODO: actualizar el token cada cierto tiempo
+        key: "Refresh",
+        value: loginResponse.refreshToken,
+      ); // TODO: refrescar el token cada cierto tiempo
       emit(state.copyWith(
-          status: PageStatus.success,
-          loginSuccess: true,
-          token: loginResponse.authToken,
-          refreshToken: loginResponse.refreshToken));
+        status: PageStatus.success,
+        loginSuccess: true,
+        token: loginResponse.authToken,
+        refreshToken: loginResponse.refreshToken,
+      ));
     } on Exception catch (e) {
       emit(state.copyWith(
-          status: PageStatus.failure,
-          loginSuccess: false,
-          errorMessage: e.toString(),
-          exception: e));
+        status: PageStatus.failure,
+        loginSuccess: false,
+        errorMessage: e.toString(),
+        exception: e,
+      ));
     }
   }
 }

@@ -7,8 +7,7 @@ import 'package:http/http.dart' as http;
 
 class LoginService {
   static String backendUrlBase = ip.urlBack; // url del backend
-  static Future<LoginResponseDto> login(
-      String username, String password) async {
+  Future<LoginResponseDto> login(String username, String password) async {
     LoginResponseDto result;
     var uri = Uri.parse("$backendUrlBase/api/v1/auth/login");
     var body = jsonEncode({
@@ -22,7 +21,7 @@ class LoginService {
     };
     var response = await http.post(uri,
         headers: headers, body: body); // invocación al backend
-    debugPrint('Respuesta del backend: ${response.body}');
+    // debugPrint('Respuesta del backend: ${response.body}');
     if (response.statusCode == 200) {
       debugPrint(
           'Respuesta 200 del backend (exitoso).'); // 200 significa que el backend procesó la solicitud correctamente
@@ -32,7 +31,7 @@ class LoginService {
         // si el backend autenticó al usuario
         result = LoginResponseDto.fromJson(
             responseDto.response); // ESTO es lo que se retorna al cubit
-        debugPrint('resultado: ${result.toJson()}');
+        // debugPrint('resultado: ${result.toJson()}');
       } else {
         throw Exception(responseDto.errorMessage);
       }

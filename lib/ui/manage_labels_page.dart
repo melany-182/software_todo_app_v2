@@ -1,8 +1,8 @@
+/*
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:software_todo_app_v2/bloc/labels_cubit.dart';
 import 'package:software_todo_app_v2/bloc/labels_state.dart';
-import 'package:software_todo_app_v2/models/label_model.dart';
 
 class ManageLabelsPage extends StatelessWidget {
   const ManageLabelsPage({Key? key}) : super(key: key);
@@ -132,3 +132,4 @@ class ManageLabelsPage extends StatelessWidget {
     );
   }
 }
+*/
