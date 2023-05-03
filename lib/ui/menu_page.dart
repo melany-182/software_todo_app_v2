@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:software_todo_app_v2/bloc/labels_cubit.dart';
 import 'package:software_todo_app_v2/bloc/login_state.dart';
 import 'package:software_todo_app_v2/bloc/tasks_cubit.dart';
 import 'package:software_todo_app_v2/bloc/tasks_state.dart';
@@ -52,6 +53,26 @@ class MenuPage extends StatelessWidget {
                   } else {
                     stateStringColor = Colors.green;
                   }
+                  String taskLabel = '';
+                  BlocProvider.of<LabelsCubit>(context).labels();
+                  for (int i = 0;
+                      i <
+                          BlocProvider.of<LabelsCubit>(context)
+                              .state
+                              .data
+                              .length;
+                      i++) {
+                    if (state.data[index].labelId ==
+                        BlocProvider.of<LabelsCubit>(context)
+                            .state
+                            .data[i]
+                            .labelId) {
+                      taskLabel = BlocProvider.of<LabelsCubit>(context)
+                          .state
+                          .data[i]
+                          .name;
+                    }
+                  }
                   return Card(
                     child: ListTile(
                       title: Column(
@@ -84,7 +105,7 @@ class MenuPage extends StatelessWidget {
                             style: const TextStyle(fontSize: 15),
                           ),
                           Text(
-                            state.data[index].label.name,
+                            taskLabel,
                             style: const TextStyle(fontSize: 15),
                           ),
                           Row(
@@ -92,15 +113,15 @@ class MenuPage extends StatelessWidget {
                             children: [
                               GestureDetector(
                                 /*
-                                onTap: () {
-                                  // TODO: se llama al cubit para que ejecute el cambio de estado de la tarea
-                                  context
-                                      .read<TasksCubit>()
-                                      .changeTaskState(state.data[index]);
-                                  debugPrint(
-                                      "Estado de la tarea actualizado! Lista de tareas actualizada: ${state.data.toString()}");
-                                },
-                                */
+                                  onTap: () {
+                                    // TODO: se llama al cubit para que ejecute el cambio de estado de la tarea
+                                    context
+                                        .read<TasksCubit>()
+                                        .changeTaskState(state.data[index]);
+                                    debugPrint(
+                                        "Estado de la tarea actualizado! Lista de tareas actualizada: ${state.data.toString()}");
+                                  },
+                                  */
                                 child: Text(
                                   changeStateString,
                                   style: const TextStyle(
@@ -116,16 +137,16 @@ class MenuPage extends StatelessWidget {
                         ],
                       ),
                       /* // botón para eliminar tarea // antes de la integración con el backend
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {
-                          BlocProvider.of<TasksCubit>(context).deleteTask(
-                              BlocProvider.of<TasksCubit>(context)
-                                  .state
-                                  .tasks[index]);
-                        },
-                      ),
-                      */
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {
+                            BlocProvider.of<TasksCubit>(context).deleteTask(
+                                BlocProvider.of<TasksCubit>(context)
+                                    .state
+                                    .tasks[index]);
+                          },
+                        ),
+                        */
                     ),
                   );
                 },
@@ -146,12 +167,8 @@ class MenuPage extends StatelessWidget {
         child: RawMaterialButton(
           // función que se ejecutará al apretar el botón +, invocará a la página de añadir tarea
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AddTaskPage(),
-              ),
-            );
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => AddTaskPage()));
           },
           elevation: 2,
           fillColor: const Color.fromARGB(255, 220, 214, 248),

@@ -1,17 +1,15 @@
-import 'package:software_todo_app_v2/dto/label_dto.dart';
-
 class TaskDto {
   int taskId;
   String description;
   String deadline;
-  LabelDto label;
+  int labelId;
   String state;
 
   TaskDto({
     required this.taskId,
     required this.description,
     required this.deadline,
-    required this.label,
+    required this.labelId,
     required this.state,
   });
 
@@ -20,7 +18,7 @@ class TaskDto {
       taskId: json['taskId'],
       description: json['description'],
       deadline: json['deadline'],
-      label: json['label'],
+      labelId: json['labelId'],
       state: json['state'],
     );
   }
@@ -30,7 +28,7 @@ class TaskDto {
     data['taskId'] = taskId;
     data['description'] = description;
     data['deadline'] = deadline;
-    data['label'] = label;
+    data['labelId'] = labelId;
     data['state'] = state;
     return data;
   }

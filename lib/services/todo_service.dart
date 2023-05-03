@@ -50,7 +50,7 @@ class TodoService {
     var response = await http.post(uri, headers: headers, body: body);
     if (response.statusCode == 200) {
       result = ResponseDto.fromJson(jsonDecode(response.body));
-      debugPrint("result (aquí, addtask service): ${result.toJson()}");
+      // debugPrint("result (aquí, addtask service): ${result.toJson()}");
     } else {
       throw Exception('Error desconocido al intentar guardar la tarea.');
     }

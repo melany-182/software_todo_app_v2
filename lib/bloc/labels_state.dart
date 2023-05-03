@@ -6,12 +6,15 @@ class LabelsState {
   final List<LabelDto> data;
   final String? errorMessage;
   final String? selectedLabel; // valor seleccionado en el dropdown button
+  final int?
+      selectedLabelId; // id de la etiqueta seleccionada en el dropdown button
 
   const LabelsState({
     this.status = PageStatus.initial,
     this.data = const [],
     this.errorMessage,
     this.selectedLabel,
+    this.selectedLabelId,
   });
 
   LabelsState copyWith({
@@ -19,12 +22,14 @@ class LabelsState {
     List<LabelDto>? data,
     String? errorMessage,
     String? selectedLabel,
+    int? selectedLabelId,
   }) {
     return LabelsState(
       status: status ?? this.status,
       data: data ?? this.data,
       errorMessage: errorMessage ?? this.errorMessage,
       selectedLabel: selectedLabel ?? this.selectedLabel,
+      selectedLabelId: selectedLabelId ?? this.selectedLabelId,
     );
   }
 
@@ -33,6 +38,7 @@ class LabelsState {
         data,
         errorMessage,
         selectedLabel,
+        selectedLabelId,
       ];
 
   /*

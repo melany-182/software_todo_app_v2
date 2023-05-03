@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:software_todo_app_v2/bloc/labels_state.dart';
@@ -28,20 +29,27 @@ class LabelsCubit extends Cubit<LabelsState> {
 
   // método para settear el valor seleccionado en el dropdown button
   void selectLabel(String selectedLabel) {
+    int selectedLabelId = identifyLabelByName(selectedLabel).labelId;
+    debugPrint("id: $selectedLabelId");
     emit(state.copyWith(
       selectedLabel: selectedLabel,
+      selectedLabelId: selectedLabelId,
     ));
   }
 
   // para el dropdown button
-  LabelDto findLabelByName(String? labelName) {
-    List<LabelDto>? labels = state.data;
-    for (LabelDto label in labels) {
-      if (label.name == labelName) {
-        return label;
+  LabelDto identifyLabelByName(String labelName) {
+    List<LabelDto> labels = state.data;
+    LabelDto label = LabelDto(labelId: 0, name: '');
+    for (int i = 0; i < labels.length; i++) {
+      if (labels[i].name.toString() == labelName) {
+        debugPrint("etiqueta encontrada: ${labels[i].name.toString()}");
+        label = labels[i];
+        break;
       }
     }
-    return LabelDto(labelId: 0, name: '');
+    debugPrint(label.toJson().toString());
+    return label;
   }
 
   /* // métodos antes de la integración con el backend
@@ -87,10 +95,10 @@ class LabelsCubit extends Cubit<LabelsState> {
     ));
   }
 
-  // TODO: implementar este método
+  // todo: implementar este método
   void modifyLabel(Label labelToEdit, String newLabel) {}
 
-  // FIXME: arreglar
+  // fixme: arreglar
   void deleteLabel(Label labelToDelete, String? selectedLabel) {
     List<Label>? labels = state.labels;
     labels!.remove(labelToDelete);

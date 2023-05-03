@@ -37,11 +37,13 @@ class TasksCubit extends Cubit<TasksState> {
       debugPrint("response (aquí, addtask cubit): ${response.toJson()}");
       emit(state.copyWith(
         status: PageStatus.success,
+        addTaskSuccess: true,
         // data: await TodoService().getTasksList(token), // actualización de la lista de tareas ***
       ));
     } on Exception catch (e) {
       emit(state.copyWith(
         status: PageStatus.failure,
+        addTaskSuccess: false,
         errorMessage: e.toString(),
       ));
     }
