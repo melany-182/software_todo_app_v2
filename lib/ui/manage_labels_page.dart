@@ -112,10 +112,9 @@ class ManageLabelsPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              // función que se ejecutará al apretar el botón Cerrar, invocará a la página de añadir tarea sin guardar ningún cambio
+              // FIXME: función que se ejecutará al apretar el botón Cerrar, invocará a la página de añadir tarea sin guardar ningún cambio
               onPressed: () {
                 // BlocProvider.of<LabelsCubit>(context).state.labelsToModify = {};
-
                 debugPrint(
                     "Etiquetas actualizadas: ${BlocProvider.of<LabelsCubit>(context).state.data.toString()}");
                 Navigator.pop(context);

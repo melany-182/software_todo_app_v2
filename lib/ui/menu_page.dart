@@ -144,9 +144,12 @@ class MenuPage extends StatelessWidget {
                                       labelId: state.data[index].labelId);
                                   // se llama al cubit para que ejecute el cambio de estado de la tarea
                                   // FIXME: el estado se cambia en el backend, pero no se actualiza en el frontend
-                                  // por alguna razón, menu_page no está escuchando los cambios de estado
+                                  // por alguna razón, MenuPage no está escuchando los cambios de estado de TasksCubit
                                   context.read<TasksCubit>().updateTaskById(
                                       state.data[index].taskId, newTask);
+                                  // solución temporal: se recarga la página
+                                  Navigator.pushNamedAndRemoveUntil(context,
+                                      '/menu', (route) => route.isFirst);
                                 },
                                 child: Text(
                                   changeStateString,
