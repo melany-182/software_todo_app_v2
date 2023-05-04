@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:software_todo_app_v2/bloc/labels_state.dart';
 import 'package:software_todo_app_v2/bloc/login_state.dart';
 import 'package:software_todo_app_v2/dto/label_dto.dart';
+import 'package:software_todo_app_v2/dto/response_dto.dart';
 import 'package:software_todo_app_v2/services/labels_service.dart';
 
 class LabelsCubit extends Cubit<LabelsState> {
@@ -14,7 +15,7 @@ class LabelsCubit extends Cubit<LabelsState> {
     const storage = FlutterSecureStorage();
     String? token = await storage.read(key: "Token");
     try {
-      final result = await LabelsService().getLabelsList(token!);
+      final result = await LabelsService.getLabelsList(token!);
       emit(state.copyWith(
         status: PageStatus.success,
         data: result,
@@ -23,6 +24,70 @@ class LabelsCubit extends Cubit<LabelsState> {
       emit(state.copyWith(
         status: PageStatus.failure,
         errorMessage: e.toString(),
+      ));
+    }
+  }
+
+  Future<void> addLabel(LabelDto newLabel) async {
+    emit(state.copyWith(status: PageStatus.loading));
+    const storage = FlutterSecureStorage();
+    String? token = await storage.read(key: "Token");
+    try {
+      ResponseDto response = await LabelsService.addLabel(newLabel, token!);
+      debugPrint("response (aquí, add label cubit): ${response.toJson()}");
+      emit(state.copyWith(
+        status: PageStatus.success,
+        addLabelSuccess: true,
+        // data: await LabelsService.getLabelsList(token), // actualización de la lista de etiquetas ***
+      ));
+    } on Exception catch (e) {
+      emit(state.copyWith(
+        status: PageStatus.failure,
+        addLabelSuccess: false,
+        errorMessage: e.toString(),
+      ));
+    }
+  }
+
+  Future<void> updateLabelById(int labelId, LabelDto newLabel) async {
+    emit(state.copyWith(status: PageStatus.loading));
+    const storage = FlutterSecureStorage();
+    String? token = await storage.read(key: "Token");
+    try {
+      ResponseDto response =
+          await LabelsService.updateLabelById(labelId, newLabel, token!);
+      debugPrint("response (aquí, update label cubit): ${response.toJson()}");
+      emit(state.copyWith(
+        status: PageStatus.success,
+        updateLabelSuccess: true,
+        // data: await TodoService.getTasksList(token), // actualización de la lista de tareas ***
+      ));
+    } on Exception catch (e) {
+      emit(state.copyWith(
+        status: PageStatus.failure,
+        updateLabelSuccess: false,
+        errorMessage: e.toString(),
+      ));
+    }
+  }
+
+  Future<void> deleteLabelById(int labelId) async {
+    emit(state.copyWith(status: PageStatus.loading));
+    const storage = FlutterSecureStorage();
+    String? token = await storage.read(key: "Token");
+    try {
+      ResponseDto response =
+          await LabelsService.deleteLabelById(labelId, token!);
+      debugPrint("response (aquí, delete label cubit): ${response.toJson()}");
+      emit(state.copyWith(
+        status: PageStatus.success,
+        deleteLabelSuccess: true,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: PageStatus.failure,
+        errorMessage: e.toString(),
+        deleteLabelSuccess: false,
       ));
     }
   }

@@ -7,7 +7,9 @@ import 'package:http/http.dart' as http;
 
 class LoginService {
   static String backendUrlBase = ip.urlBack; // url del backend
-  Future<LoginResponseDto> login(String username, String password) async {
+
+  static Future<LoginResponseDto> login(
+      String username, String password) async {
     LoginResponseDto result;
     var uri = Uri.parse("$backendUrlBase/api/v1/auth/login");
     var body = jsonEncode({

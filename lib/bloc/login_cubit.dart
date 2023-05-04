@@ -8,11 +8,11 @@ class LoginCubit extends Cubit<LoginState> {
   LoginCubit() : super(const LoginState());
 
   Future<void> login(String username, String password) async {
-    const storage = FlutterSecureStorage(); // para mantener los tokens seguros
     emit(state.copyWith(status: PageStatus.loading));
+    const storage = FlutterSecureStorage(); // para mantener los tokens seguros
     try {
-      LoginResponseDto loginResponse = await LoginService()
-          .login(username, password); // devuelve {token, refreshToken}
+      LoginResponseDto loginResponse = await LoginService.login(
+          username, password); // devuelve {token, refreshToken}
       await storage.write(key: "Token", value: loginResponse.authToken);
       await storage.write(
         key: "Refresh",

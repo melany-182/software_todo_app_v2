@@ -85,12 +85,13 @@ class LoginPage extends StatelessWidget {
                 state.status == PageStatus.loading
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
-                        onPressed: () async {
-                          // se llama al cubit para que ejecute el login
-                          await context
-                              .read<LoginCubit>()
-                              .login(usernameInput.text, passwordInput.text);
-                        },
+                        onPressed: state.status == PageStatus.loading
+                            ? null
+                            : () {
+                                // se llama al cubit para que ejecute el login
+                                context.read<LoginCubit>().login(
+                                    usernameInput.text, passwordInput.text);
+                              },
                         child: const Text('Ingresar'),
                       ),
               ],

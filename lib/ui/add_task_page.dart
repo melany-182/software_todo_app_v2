@@ -9,6 +9,7 @@ import 'package:software_todo_app_v2/bloc/tasks_state.dart';
 import 'package:software_todo_app_v2/dto/label_dto.dart';
 import 'package:software_todo_app_v2/dto/task_dto.dart';
 import 'package:software_todo_app_v2/ui/manage_labels_page.dart';
+import 'package:software_todo_app_v2/ui/menu_page.dart';
 
 class AddTaskPage extends StatelessWidget {
   AddTaskPage({Key? key}) : super(key: key);
@@ -29,12 +30,11 @@ class AddTaskPage extends StatelessWidget {
           if (state.status == PageStatus.success &&
               state.addTaskSuccess == true) {
             // si el cubit verifica que la tarea se guardó correctamente, se vuelve a la página anterior
-            Navigator.pop(
-                context); // FIXME: al hacer pop, se vuelve a la página anterior, pero no se actualiza la lista de tareas
-            // Navigator.pushAndRemoveUntil(
-            //    context,
-            //    MaterialPageRoute(builder: (context) => MenuPage()),
-            //    (route) => route.isFirst);
+            // Navigator.pop(context); // FIXME: al hacer pop, se vuelve a la página anterior, pero no se actualiza la lista de tareas
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => MenuPage()),
+                (route) => route.isFirst);
           } else if (state.status == PageStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -195,54 +195,59 @@ class AddTaskPage extends StatelessWidget {
                         listener: (context, state) {},
                         child: ElevatedButton(
                           // función que se ejecutará al apretar el botón Guardar, agregará la tarea
-                          onPressed: () async {
-                            if (taskNameInput.text != "" &&
-                                deadlineInput.text != "" &&
-                                BlocProvider.of<LabelsCubit>(context)
-                                        .state
-                                        .selectedLabel !=
-                                    null) {
-                              // si el nombre de la tarea, la fecha de cumplimiento y la etiqueta no están vacíos
-                              TaskDto newTask = TaskDto(
-                                taskId: 0,
-                                description: taskNameInput.text,
-                                deadline: deadlineInput.text,
-                                labelId: BlocProvider.of<LabelsCubit>(context)
-                                    .state
-                                    .selectedLabelId!,
-                                state: "",
-                              );
-                              debugPrint(
-                                  "newTask: ${newTask.toJson().toString()}");
-                              // se llama al cubit para que ejecute la función de agregar la tarea
-                              await context.read<TasksCubit>().addTask(newTask);
-                              debugPrint(
-                                  // ignore: use_build_context_synchronously
-                                  "TAREA GUARDADA! Lista de tareas actualizada: ${context.read<TasksCubit>().state.data.toString()}");
-                            } else {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text("Error."),
-                                    content: const Text(
-                                        'No se puede guardar la tarea porque no se especificó la descripción, la fecha de cumplimiento o la etiqueta de la misma.',
-                                        style: TextStyle(fontSize: 15),
-                                        textAlign: TextAlign.justify),
-                                    actions: [
-                                      TextButton(
-                                        child: const Text("OK"),
-                                        onPressed: () {
-                                          Navigator.pop(
-                                              context); // cierra el diálogo emergente
-                                        },
-                                      ),
-                                    ],
-                                  );
+                          onPressed: state.status == PageStatus.loading
+                              ? null
+                              : () {
+                                  if (taskNameInput.text != "" &&
+                                      deadlineInput.text != "" &&
+                                      BlocProvider.of<LabelsCubit>(context)
+                                              .state
+                                              .selectedLabel !=
+                                          null) {
+                                    // si el nombre de la tarea, la fecha de cumplimiento y la etiqueta no están vacíos
+                                    TaskDto newTask = TaskDto(
+                                      taskId: 0,
+                                      description: taskNameInput.text,
+                                      deadline: deadlineInput.text,
+                                      labelId:
+                                          BlocProvider.of<LabelsCubit>(context)
+                                              .state
+                                              .selectedLabelId!,
+                                      state: "",
+                                    );
+                                    debugPrint(
+                                        "newTask: ${newTask.toJson().toString()}");
+                                    // se llama al cubit para que ejecute la función de agregar la tarea
+                                    BlocProvider.of<TasksCubit>(context)
+                                        .addTask(newTask);
+                                    // se actualiza la lista de tareas
+                                    BlocProvider.of<TasksCubit>(context).tasks;
+                                    debugPrint(
+                                        "TAREA GUARDADA! Lista de tareas actualizada: ${BlocProvider.of<TasksCubit>(context).state.data.toString()}");
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text("Error."),
+                                          content: const Text(
+                                              'No se puede guardar la tarea porque no se especificó la descripción, la fecha de cumplimiento o la etiqueta de la misma.',
+                                              style: TextStyle(fontSize: 15),
+                                              textAlign: TextAlign.justify),
+                                          actions: [
+                                            TextButton(
+                                              child: const Text("OK"),
+                                              onPressed: () {
+                                                Navigator.pop(
+                                                    context); // cierra el diálogo emergente
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }
                                 },
-                              );
-                            }
-                          },
                           child: const Text('Guardar'),
                         ),
                       ),

@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 class TodoService {
   static String backendUrlBase = ip.urlBack;
 
-  Future<List<TaskDto>> getTasksList(String token) async {
+  static Future<List<TaskDto>> getTasksList(String token) async {
     List<TaskDto> result;
     var uri = Uri.parse("$backendUrlBase/api/v1/task");
     Map<String, String> headers = {
@@ -37,7 +37,7 @@ class TodoService {
     return result;
   }
 
-  Future<ResponseDto> addTask(TaskDto newTask, String token) async {
+  static Future<ResponseDto> addTask(TaskDto newTask, String token) async {
     ResponseDto result;
     var uri = Uri.parse("$backendUrlBase/api/v1/task");
     var body = json.encode(newTask.toJson());
@@ -62,7 +62,7 @@ class TodoService {
     return result;
   }
 
-  Future<ResponseDto> updateTaskById(
+  static Future<ResponseDto> updateTaskById(
       int taskId, TaskDto newTask, String token) async {
     ResponseDto result;
     var uri = Uri.parse("$backendUrlBase/api/v1/task/${taskId.toString()}");

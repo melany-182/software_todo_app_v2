@@ -28,6 +28,14 @@ class ManageLabelsPage extends StatelessWidget {
               ),
             );
           }
+          if (state.status == PageStatus.success &&
+              state.deleteLabelSuccess == true) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Etiqueta eliminada con éxito.'),
+              ),
+            );
+          }
         },
         builder: (context, state) {
           if (state.status == PageStatus.loading) {
@@ -52,14 +60,18 @@ class ManageLabelsPage extends StatelessWidget {
                               labelText: 'Etiqueta',
                               border: OutlineInputBorder(),
                             ),
-                            /*
                             onChanged: (modifiedValue) {
-                              state.labelsToModify?[actualLabel.getLabelId()] =
-                                  modifiedValue;
-                              debugPrint(
-                                  "Etiquetas a modificar: ${BlocProvider.of<LabelsCubit>(context).state.labelsToModify.toString()}");
+                              LabelDto newLabel = LabelDto(
+                                labelId: actualLabel.labelId,
+                                name: modifiedValue,
+                              );
+                              // se llama al cubit para que ejecute la función de modificar la etiqueta
+                              BlocProvider.of<LabelsCubit>(context)
+                                  .updateLabelById(
+                                      actualLabel.labelId, newLabel);
+                              // se actualiza la lista de etiquetas
+                              BlocProvider.of<LabelsCubit>(context).labels();
                             },
-                            */
                           ),
                         ),
                         const SizedBox(width: 15),
@@ -67,17 +79,16 @@ class ManageLabelsPage extends StatelessWidget {
                           icon: const Icon(Icons.delete),
                           iconSize: 30,
                           padding: const EdgeInsets.only(left: 7.5),
-                          onPressed: () {
-                            // BlocProvider.of<LabelsCubit>(context).deleteLabel(actualLabel, selectedLabel);
-                            /*
-                            BlocProvider.of<LabelsCubit>(context)
-                                .state
-                                .labelsToDelete
-                                ?.add(actualLabel);
-                            debugPrint(
-                                "Etiquetas a eliminar: ${BlocProvider.of<LabelsCubit>(context).state.labelsToDelete.toString()}");
-                            */
-                          },
+                          onPressed: state.status == PageStatus.loading
+                              ? null
+                              : () {
+                                  // se llama al cubit para que ejecute la función de eliminar la etiqueta
+                                  BlocProvider.of<LabelsCubit>(context)
+                                      .deleteLabelById(actualLabel.labelId);
+                                  // se actualiza la lista de etiquetas // FIXME: no se actualiza la lista de etiquetas
+                                  BlocProvider.of<LabelsCubit>(context)
+                                      .labels();
+                                },
                         ),
                       ],
                     ),
@@ -124,16 +135,11 @@ class ManageLabelsPage extends StatelessWidget {
             ElevatedButton(
               // función que se ejecutará al apretar el botón Nuevo, creará un nuevo campo de texto para añadir una nueva etiqueta
               onPressed: () {
-                // TODO: implementar la función de añadir nuevo campo de texto para nueva etiqueta
-                /*BlocProvider.of<LabelsCubit>(context).addLabel(
-                    Label(
-                        labelId: BlocProvider.of<LabelsCubit>(context)
-                                .state
-                                .labels!
-                                .length +
-                            1,
-                        name: 'Nueva etiqueta'),
-                    selectedLabel);*/
+                LabelDto newLabel =
+                    LabelDto(labelId: 0, name: 'Nueva etiqueta');
+                BlocProvider.of<LabelsCubit>(context).addLabel(newLabel);
+                debugPrint(
+                    "Etiquetas actualizadas: ${BlocProvider.of<LabelsCubit>(context).state.data.toString()}");
               },
               child: const Text('Nuevo'),
             ),
