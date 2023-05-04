@@ -28,14 +28,6 @@ class ManageLabelsPage extends StatelessWidget {
               ),
             );
           }
-          if (state.status == PageStatus.success &&
-              state.deleteLabelSuccess == true) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Etiqueta eliminada con éxito.'),
-              ),
-            );
-          }
         },
         builder: (context, state) {
           if (state.status == PageStatus.loading) {
@@ -66,11 +58,10 @@ class ManageLabelsPage extends StatelessWidget {
                                 name: modifiedValue,
                               );
                               // se llama al cubit para que ejecute la función de modificar la etiqueta
-                              BlocProvider.of<LabelsCubit>(context)
-                                  .updateLabelById(
-                                      actualLabel.labelId, newLabel);
+                              labelsCubit.updateLabelById(
+                                  actualLabel.labelId, newLabel);
                               // se actualiza la lista de etiquetas
-                              BlocProvider.of<LabelsCubit>(context).labels();
+                              labelsCubit.labels();
                             },
                           ),
                         ),
@@ -83,11 +74,10 @@ class ManageLabelsPage extends StatelessWidget {
                               ? null
                               : () {
                                   // se llama al cubit para que ejecute la función de eliminar la etiqueta
-                                  BlocProvider.of<LabelsCubit>(context)
+                                  labelsCubit
                                       .deleteLabelById(actualLabel.labelId);
-                                  // se actualiza la lista de etiquetas // FIXME: no se actualiza la lista de etiquetas
-                                  BlocProvider.of<LabelsCubit>(context)
-                                      .labels();
+                                  // se actualiza la lista de etiquetas
+                                  labelsCubit.labels();
                                 },
                         ),
                       ],
@@ -113,10 +103,10 @@ class ManageLabelsPage extends StatelessWidget {
           children: [
             ElevatedButton(
               // FIXME: función que se ejecutará al apretar el botón Cerrar, invocará a la página de añadir tarea sin guardar ningún cambio
+              // no se deben guardar los cambios, se debe volver a la página anterior sin guardar nada
               onPressed: () {
-                // BlocProvider.of<LabelsCubit>(context).state.labelsToModify = {};
-                debugPrint(
-                    "Etiquetas actualizadas: ${BlocProvider.of<LabelsCubit>(context).state.data.toString()}");
+                // BlocProvider.of<LabelsCubit>(context).state.labelsToModify = {}; // antes de la integración con el backend
+                // labelsCubit.labels();
                 Navigator.pop(context);
               },
               child: const Text('Cerrar'),
@@ -126,6 +116,7 @@ class ManageLabelsPage extends StatelessWidget {
               // función que se ejecutará al apretar el botón Guardar, invocará a la página de añadir tarea + guardará todos los cambios
               onPressed: () {
                 // TODO: implementar la función de guardar cambios
+                // labelsCubit.labels();
                 Navigator.pop(context);
               },
               child: const Text('Guardar'),
@@ -136,9 +127,8 @@ class ManageLabelsPage extends StatelessWidget {
               onPressed: () {
                 LabelDto newLabel =
                     LabelDto(labelId: 0, name: 'Nueva etiqueta');
-                BlocProvider.of<LabelsCubit>(context).addLabel(newLabel);
-                debugPrint(
-                    "Etiquetas actualizadas: ${BlocProvider.of<LabelsCubit>(context).state.data.toString()}");
+                labelsCubit.addLabel(newLabel);
+                labelsCubit.labels();
               },
               child: const Text('Nuevo'),
             ),

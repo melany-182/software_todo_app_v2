@@ -14,28 +14,32 @@ import 'package:software_todo_app_v2/ui/menu_page.dart';
 class AddTaskPage extends StatelessWidget {
   AddTaskPage({Key? key}) : super(key: key);
 
+  final tasksCubit = TasksCubit();
   final labelsCubit = LabelsCubit();
   final taskNameInput = TextEditingController();
   final deadlineInput = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    tasksCubit.tasks(); // obtención de las tareas mediante el cubit
     labelsCubit.labels(); // obtención de las etiquetas mediante el cubit
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registrar Nueva Tarea'),
       ),
       body: BlocConsumer<TasksCubit, TasksState>(
+        bloc: tasksCubit,
         listener: (context, state) {
-          if (state.status == PageStatus.success &&
-              state.addTaskSuccess == true) {
+          if (tasksCubit.state.status == PageStatus.success &&
+              tasksCubit.state.addTaskSuccess == true) {
             // si el cubit verifica que la tarea se guardó correctamente, se vuelve a la página anterior
             // Navigator.pop(context); // FIXME: al hacer pop, se vuelve a la página anterior, pero no se actualiza la lista de tareas
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => MenuPage()),
                 (route) => route.isFirst);
-          } else if (state.status == PageStatus.failure) {
+          } else if (tasksCubit.state.status == PageStatus.failure &&
+              tasksCubit.state.addTaskSuccess == false) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content:
@@ -100,7 +104,7 @@ class AddTaskPage extends StatelessWidget {
                     BlocConsumer<LabelsCubit, LabelsState>(
                       bloc: labelsCubit,
                       listener: (context, state) {
-                        if (state.status == PageStatus.failure) {
+                        if (labelsCubit.state.status == PageStatus.failure) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
@@ -110,12 +114,13 @@ class AddTaskPage extends StatelessWidget {
                         }
                       },
                       builder: (context, state) {
-                        if (state.status == PageStatus.loading) {
+                        if (labelsCubit.state.status == PageStatus.loading) {
                           return const Center(
                             child: CircularProgressIndicator(),
                           );
                         } else {
-                          String? selectedLabel = state.selectedLabel;
+                          String? selectedLabel =
+                              labelsCubit.state.selectedLabel;
                           return Expanded(
                             child: DropdownButtonFormField<String>(
                               hint: const Text('Seleccionar etiqueta'),
@@ -134,14 +139,15 @@ class AddTaskPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(5.0),
                                 ),
                               ),
-                              value:
-                                  state.data.isNotEmpty ? selectedLabel : null,
+                              value: labelsCubit.state.data.isNotEmpty
+                                  ? selectedLabel
+                                  : null,
                               onChanged: (newValue) {
-                                BlocProvider.of<LabelsCubit>(context)
-                                    .selectLabel(newValue!);
+                                labelsCubit.selectLabel(newValue!);
                                 // debugPrint("Se seleccionó la etiqueta $newValue");
                               },
-                              items: state.data.map<DropdownMenuItem<String>>(
+                              items: labelsCubit.state.data
+                                  .map<DropdownMenuItem<String>>(
                                 (LabelDto value) {
                                   return DropdownMenuItem<String>(
                                     value: value.name,
@@ -175,6 +181,7 @@ class AddTaskPage extends StatelessWidget {
         },
       ),
       bottomNavigationBar: BlocBuilder<TasksCubit, TasksState>(
+        bloc: tasksCubit,
         builder: (context, state) {
           return BottomAppBar(
             padding: const EdgeInsets.all(25),
@@ -191,65 +198,51 @@ class AddTaskPage extends StatelessWidget {
                 const SizedBox(width: 50),
                 state.status == PageStatus.loading
                     ? const CircularProgressIndicator()
-                    : BlocListener<LabelsCubit, LabelsState>(
-                        listener: (context, state) {},
-                        child: ElevatedButton(
-                          // función que se ejecutará al apretar el botón Guardar, agregará la tarea
-                          onPressed: state.status == PageStatus.loading
-                              ? null
-                              : () {
-                                  if (taskNameInput.text != "" &&
-                                      deadlineInput.text != "" &&
-                                      BlocProvider.of<LabelsCubit>(context)
-                                              .state
-                                              .selectedLabel !=
-                                          null) {
-                                    // si el nombre de la tarea, la fecha de cumplimiento y la etiqueta no están vacíos
-                                    TaskDto newTask = TaskDto(
-                                      taskId: 0,
-                                      description: taskNameInput.text,
-                                      deadline: deadlineInput.text,
-                                      labelId:
-                                          BlocProvider.of<LabelsCubit>(context)
-                                              .state
-                                              .selectedLabelId!,
-                                      state: "",
-                                    );
-                                    debugPrint(
-                                        "newTask: ${newTask.toJson().toString()}");
-                                    // se llama al cubit para que ejecute la función de agregar la tarea
-                                    BlocProvider.of<TasksCubit>(context)
-                                        .addTask(newTask);
-                                    // se actualiza la lista de tareas
-                                    BlocProvider.of<TasksCubit>(context).tasks;
-                                    debugPrint(
-                                        "TAREA GUARDADA! Lista de tareas actualizada: ${BlocProvider.of<TasksCubit>(context).state.data.toString()}");
-                                  } else {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text("Error."),
-                                          content: const Text(
-                                              'No se puede guardar la tarea porque no se especificó la descripción, la fecha de cumplimiento o la etiqueta de la misma.',
-                                              style: TextStyle(fontSize: 15),
-                                              textAlign: TextAlign.justify),
-                                          actions: [
-                                            TextButton(
-                                              child: const Text("OK"),
-                                              onPressed: () {
-                                                Navigator.pop(
-                                                    context); // cierra el diálogo emergente
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  }
-                                },
-                          child: const Text('Guardar'),
-                        ),
+                    : ElevatedButton(
+                        // función que se ejecutará al apretar el botón Guardar, agregará la tarea
+                        onPressed: tasksCubit.state.status == PageStatus.loading
+                            ? null
+                            : () {
+                                if (taskNameInput.text != "" &&
+                                    deadlineInput.text != "" &&
+                                    labelsCubit.state.selectedLabel != null) {
+                                  // si el nombre de la tarea, la fecha de cumplimiento y la etiqueta no están vacíos
+                                  TaskDto newTask = TaskDto(
+                                    taskId: 0,
+                                    description: taskNameInput.text,
+                                    deadline: deadlineInput.text,
+                                    labelId: labelsCubit.state.selectedLabelId!,
+                                    state: "",
+                                  );
+                                  // se llama al cubit para que ejecute la función de agregar la tarea
+                                  tasksCubit.addTask(newTask);
+                                  // se actualiza la lista de tareas
+                                  tasksCubit.tasks();
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Error."),
+                                        content: const Text(
+                                            'No se puede guardar la tarea porque no se especificó la descripción, la fecha de cumplimiento o la etiqueta de la misma.',
+                                            style: TextStyle(fontSize: 15),
+                                            textAlign: TextAlign.justify),
+                                        actions: [
+                                          TextButton(
+                                            child: const Text("OK"),
+                                            onPressed: () {
+                                              Navigator.pop(
+                                                  context); // cierra el diálogo emergente
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
+                              },
+                        child: const Text('Guardar'),
                       ),
               ],
             ),
