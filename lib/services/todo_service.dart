@@ -16,8 +16,7 @@ class TodoService {
       'Accept': 'application/json',
       'Authorization': 'Bearer $token',
     };
-    var response =
-        await http.get(uri, headers: headers); // invocación al backend
+    var response = await http.get(uri, headers: headers);
     if (response.statusCode == 200) {
       var responseDto = ResponseDto.fromJson(jsonDecode(response.body));
       debugPrint("backend response (TASKS): ${responseDto.toJson()}");
@@ -49,10 +48,42 @@ class TodoService {
     };
     var response = await http.post(uri, headers: headers, body: body);
     if (response.statusCode == 200) {
-      result = ResponseDto.fromJson(jsonDecode(response.body));
-      // debugPrint("result (aquí, addtask service): ${result.toJson()}");
+      var responseDto = ResponseDto.fromJson(jsonDecode(response.body));
+      debugPrint("backend response (ADD TASK): ${responseDto.toJson()}");
+      if (responseDto.code.toString() == '0000') {
+        // si la tarea se guardó correctamente
+        result = responseDto;
+      } else {
+        throw Exception(responseDto.errorMessage);
+      }
     } else {
       throw Exception('Error desconocido al intentar guardar la tarea.');
+    }
+    return result;
+  }
+
+  Future<ResponseDto> updateTaskById(
+      int taskId, TaskDto newTask, String token) async {
+    ResponseDto result;
+    var uri = Uri.parse("$backendUrlBase/api/v1/task/${taskId.toString()}");
+    var body = json.encode(newTask.toJson());
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    var response = await http.put(uri, headers: headers, body: body);
+    if (response.statusCode == 200) {
+      var responseDto = ResponseDto.fromJson(jsonDecode(response.body));
+      debugPrint("backend response (UPDATE TASK): ${responseDto.toJson()}");
+      if (responseDto.code.toString() == '0000') {
+        // si la tarea se actualizó correctamente
+        result = responseDto;
+      } else {
+        throw Exception(responseDto.errorMessage);
+      }
+    } else {
+      throw Exception('Error desconocido al intentar actualizar la tarea.');
     }
     return result;
   }

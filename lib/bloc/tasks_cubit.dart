@@ -34,7 +34,7 @@ class TasksCubit extends Cubit<TasksState> {
     String? token = await storage.read(key: "Token");
     try {
       ResponseDto response = await TodoService().addTask(newTask, token!);
-      debugPrint("response (aquí, addtask cubit): ${response.toJson()}");
+      debugPrint("response (aquí, add task cubit): ${response.toJson()}");
       emit(state.copyWith(
         status: PageStatus.success,
         addTaskSuccess: true,
@@ -44,6 +44,28 @@ class TasksCubit extends Cubit<TasksState> {
       emit(state.copyWith(
         status: PageStatus.failure,
         addTaskSuccess: false,
+        errorMessage: e.toString(),
+      ));
+    }
+  }
+
+  Future<void> updateTaskById(int taskId, TaskDto newTask) async {
+    emit(state.copyWith(status: PageStatus.loading));
+    const storage = FlutterSecureStorage();
+    String? token = await storage.read(key: "Token");
+    try {
+      ResponseDto response =
+          await TodoService().updateTaskById(taskId, newTask, token!);
+      debugPrint("response (aquí, update task cubit): ${response.toJson()}");
+      emit(state.copyWith(
+        status: PageStatus.success,
+        updateTaskSuccess: true,
+        // data: await TodoService().getTasksList(token), // actualización de la lista de tareas ***
+      ));
+    } on Exception catch (e) {
+      emit(state.copyWith(
+        status: PageStatus.failure,
+        updateTaskSuccess: false,
         errorMessage: e.toString(),
       ));
     }

@@ -1,47 +1,65 @@
-/*
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:software_todo_app_v2/bloc/labels_cubit.dart';
 import 'package:software_todo_app_v2/bloc/labels_state.dart';
+import 'package:software_todo_app_v2/bloc/login_state.dart';
+import 'package:software_todo_app_v2/dto/label_dto.dart';
 
 class ManageLabelsPage extends StatelessWidget {
-  const ManageLabelsPage({Key? key}) : super(key: key);
+  ManageLabelsPage({Key? key}) : super(key: key);
+
+  final labelsCubit = LabelsCubit();
 
   @override
   Widget build(BuildContext context) {
+    labelsCubit.labels(); // obtención de las etiquetas a través del cubit
     return Scaffold(
       appBar: AppBar(
         title: const Text('Gestionar Etiquetas'),
       ),
-      body: BlocBuilder<LabelsCubit, LabelsState>(
+      body: BlocConsumer<LabelsCubit, LabelsState>(
+        bloc: labelsCubit,
+        listener: (context, state) {
+          if (state.status == PageStatus.failure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                    'Error al obtener la data de las etiquetas: ${state.errorMessage}'),
+              ),
+            );
+          }
+        },
         builder: (context, state) {
-          if (BlocProvider.of<LabelsCubit>(context).state.labels!.isNotEmpty) {
+          if (state.status == PageStatus.loading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state.data.isNotEmpty) {
             return Container(
               padding: const EdgeInsets.all(25),
               child: ListView.builder(
-                itemCount:
-                    BlocProvider.of<LabelsCubit>(context).state.labels!.length,
+                itemCount: state.data.length,
                 itemBuilder: (context, index) {
-                  Label actualLabel = state.labels![index];
+                  LabelDto actualLabel = state.data[index];
                   return Padding(
                     padding: const EdgeInsets.only(top: 15),
                     child: Row(
                       children: [
                         Expanded(
                           child: TextFormField(
-                            initialValue: actualLabel.getName(),
+                            initialValue: actualLabel.name,
                             decoration: const InputDecoration(
                               labelText: 'Etiqueta',
                               border: OutlineInputBorder(),
                             ),
+                            /*
                             onChanged: (modifiedValue) {
-                              BlocProvider.of<LabelsCubit>(context)
-                                      .state
-                                      .labelsToModify?[
-                                  actualLabel.getLabelId()] = modifiedValue;
+                              state.labelsToModify?[actualLabel.getLabelId()] =
+                                  modifiedValue;
                               debugPrint(
                                   "Etiquetas a modificar: ${BlocProvider.of<LabelsCubit>(context).state.labelsToModify.toString()}");
                             },
+                            */
                           ),
                         ),
                         const SizedBox(width: 15),
@@ -50,12 +68,7 @@ class ManageLabelsPage extends StatelessWidget {
                           iconSize: 30,
                           padding: const EdgeInsets.only(left: 7.5),
                           onPressed: () {
-                            String? selectedLabel =
-                                BlocProvider.of<LabelsCubit>(context)
-                                    .state
-                                    .selectedLabel;
-                            BlocProvider.of<LabelsCubit>(context)
-                                .deleteLabel(actualLabel, selectedLabel);
+                            // BlocProvider.of<LabelsCubit>(context).deleteLabel(actualLabel, selectedLabel);
                             /*
                             BlocProvider.of<LabelsCubit>(context)
                                 .state
@@ -90,10 +103,10 @@ class ManageLabelsPage extends StatelessWidget {
             ElevatedButton(
               // función que se ejecutará al apretar el botón Cerrar, invocará a la página de añadir tarea sin guardar ningún cambio
               onPressed: () {
-                BlocProvider.of<LabelsCubit>(context).state.labelsToModify = {};
+                // BlocProvider.of<LabelsCubit>(context).state.labelsToModify = {};
 
                 debugPrint(
-                    "Etiquetas actualizadas: ${BlocProvider.of<LabelsCubit>(context).state.labels.toString()}");
+                    "Etiquetas actualizadas: ${BlocProvider.of<LabelsCubit>(context).state.data.toString()}");
                 Navigator.pop(context);
               },
               child: const Text('Cerrar'),
@@ -112,9 +125,7 @@ class ManageLabelsPage extends StatelessWidget {
               // función que se ejecutará al apretar el botón Nuevo, creará un nuevo campo de texto para añadir una nueva etiqueta
               onPressed: () {
                 // TODO: implementar la función de añadir nuevo campo de texto para nueva etiqueta
-                String? selectedLabel =
-                    BlocProvider.of<LabelsCubit>(context).state.selectedLabel!;
-                BlocProvider.of<LabelsCubit>(context).addLabel(
+                /*BlocProvider.of<LabelsCubit>(context).addLabel(
                     Label(
                         labelId: BlocProvider.of<LabelsCubit>(context)
                                 .state
@@ -122,7 +133,7 @@ class ManageLabelsPage extends StatelessWidget {
                                 .length +
                             1,
                         name: 'Nueva etiqueta'),
-                    selectedLabel);
+                    selectedLabel);*/
               },
               child: const Text('Nuevo'),
             ),
@@ -132,4 +143,3 @@ class ManageLabelsPage extends StatelessWidget {
     );
   }
 }
-*/

@@ -40,7 +40,8 @@ class LabelsCubit extends Cubit<LabelsState> {
   // para el dropdown button
   LabelDto identifyLabelByName(String labelName) {
     List<LabelDto> labels = state.data;
-    LabelDto label = LabelDto(labelId: 0, name: '');
+    LabelDto label =
+        LabelDto(labelId: 1, name: 'Universidad'); // FIXME: temporal
     for (int i = 0; i < labels.length; i++) {
       if (labels[i].name.toString() == labelName) {
         debugPrint("etiqueta encontrada: ${labels[i].name.toString()}");

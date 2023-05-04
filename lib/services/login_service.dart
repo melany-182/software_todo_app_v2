@@ -23,8 +23,7 @@ class LoginService {
         headers: headers, body: body); // invocación al backend
     // debugPrint('Respuesta del backend: ${response.body}');
     if (response.statusCode == 200) {
-      debugPrint(
-          'Respuesta 200 del backend (exitoso).'); // 200 significa que el backend procesó la solicitud correctamente
+      // debugPrint('Respuesta 200 del backend (exitoso).'); // 200 significa que el backend procesó la solicitud correctamente
       var responseDto = ResponseDto.fromJson(jsonDecode(response
           .body)); // aquí ya no existe statusCode, dado que ya se decodificó
       if (responseDto.code.toString() == '0000') {

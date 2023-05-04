@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
           '/login': (context) => LoginPage(),
           '/menu': (context) => MenuPage(),
           '/add_task': (context) => AddTaskPage(),
-          // '/manage_labels': (context) => ManageLabelsPage(),
+          '/manage_labels': (context) => ManageLabelsPage(),
         },
         debugShowCheckedModeBanner: false,
       ),

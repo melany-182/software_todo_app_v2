@@ -4,6 +4,7 @@ import 'package:software_todo_app_v2/bloc/labels_cubit.dart';
 import 'package:software_todo_app_v2/bloc/login_state.dart';
 import 'package:software_todo_app_v2/bloc/tasks_cubit.dart';
 import 'package:software_todo_app_v2/bloc/tasks_state.dart';
+import 'package:software_todo_app_v2/dto/task_dto.dart';
 import 'package:software_todo_app_v2/ui/add_task_page.dart';
 
 class MenuPage extends StatelessWidget {
@@ -26,6 +27,21 @@ class MenuPage extends StatelessWidget {
               SnackBar(
                 content: Text(
                     'Error al obtener la data de las tareas: ${state.errorMessage}'),
+              ),
+            );
+          }
+          if (state.status == PageStatus.success &&
+              state.addTaskSuccess == true) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Tarea agregada exitosamente'),
+              ),
+            );
+          } else if (state.status == PageStatus.failure &&
+              state.addTaskSuccess == false) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Error al agregar la tarea'),
               ),
             );
           }
@@ -112,16 +128,26 @@ class MenuPage extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               GestureDetector(
-                                /*
-                                  onTap: () {
-                                    // TODO: se llama al cubit para que ejecute el cambio de estado de la tarea
-                                    context
-                                        .read<TasksCubit>()
-                                        .changeTaskState(state.data[index]);
-                                    debugPrint(
-                                        "Estado de la tarea actualizado! Lista de tareas actualizada: ${state.data.toString()}");
-                                  },
-                                  */
+                                onTap: () {
+                                  String newState = '';
+                                  if (state.data[index].state == 'Pendiente') {
+                                    newState = 'Completada';
+                                  } else {
+                                    newState = 'Pendiente';
+                                  }
+                                  TaskDto newTask = TaskDto(
+                                      taskId: state.data[index].taskId,
+                                      description:
+                                          state.data[index].description,
+                                      deadline: state.data[index].deadline,
+                                      state: newState,
+                                      labelId: state.data[index].labelId);
+                                  // se llama al cubit para que ejecute el cambio de estado de la tarea
+                                  // FIXME: el estado se cambia en el backend, pero no se actualiza en el frontend
+                                  // por alguna razón, mi menu_page no está escuchando los cambios de estado
+                                  context.read<TasksCubit>().updateTaskById(
+                                      state.data[index].taskId, newTask);
+                                },
                                 child: Text(
                                   changeStateString,
                                   style: const TextStyle(
@@ -137,16 +163,16 @@ class MenuPage extends StatelessWidget {
                         ],
                       ),
                       /* // botón para eliminar tarea // antes de la integración con el backend
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () {
-                            BlocProvider.of<TasksCubit>(context).deleteTask(
-                                BlocProvider.of<TasksCubit>(context)
-                                    .state
-                                    .tasks[index]);
-                          },
-                        ),
-                        */
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () {
+                              BlocProvider.of<TasksCubit>(context).deleteTask(
+                                  BlocProvider.of<TasksCubit>(context)
+                                      .state
+                                      .tasks[index]);
+                            },
+                          ),
+                          */
                     ),
                   );
                 },
