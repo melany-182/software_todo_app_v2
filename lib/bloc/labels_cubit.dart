@@ -115,6 +115,15 @@ class LabelsCubit extends Cubit<LabelsState> {
     return label;
   }
 
+  void addLabelToDelete(LabelDto labelToDelete) {
+    emit(state.copyWith(
+        labelsToDelete: state.labelsToDelete!..add(labelToDelete)));
+  }
+
+  void clearLabelsToDelete() {
+    emit(state.copyWith(labelsToDelete: {}));
+  }
+
   /* // métodos antes de la integración con el backend
   List<Label>? copyOfLabels = [];
 

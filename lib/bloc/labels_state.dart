@@ -7,6 +7,7 @@ class LabelsState {
   final String? errorMessage;
   String? selectedLabel; // valor seleccionado en el dropdown button
   int? selectedLabelId; // id de la etiqueta seleccionada en el dropdown button
+  Set<LabelDto>? labelsToDelete;
 
   LabelsState({
     this.status = PageStatus.initial,
@@ -14,6 +15,7 @@ class LabelsState {
     this.errorMessage,
     this.selectedLabel,
     this.selectedLabelId,
+    this.labelsToDelete,
   });
 
   LabelsState copyWith({
@@ -22,6 +24,7 @@ class LabelsState {
     String? errorMessage,
     String? selectedLabel,
     int? selectedLabelId,
+    Set<LabelDto>? labelsToDelete,
   }) {
     return LabelsState(
       status: status ?? this.status,
@@ -29,6 +32,7 @@ class LabelsState {
       errorMessage: errorMessage ?? this.errorMessage,
       selectedLabel: selectedLabel ?? this.selectedLabel,
       selectedLabelId: selectedLabelId ?? this.selectedLabelId,
+      labelsToDelete: labelsToDelete ?? this.labelsToDelete,
     );
   }
 
@@ -38,6 +42,7 @@ class LabelsState {
         errorMessage,
         selectedLabel,
         selectedLabelId,
+        labelsToDelete,
       ];
 
   /*
