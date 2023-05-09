@@ -5,11 +5,10 @@ class LabelsState {
   final PageStatus status;
   final List<LabelDto> data;
   final String? errorMessage;
-  final String? selectedLabel; // valor seleccionado en el dropdown button
-  final int?
-      selectedLabelId; // id de la etiqueta seleccionada en el dropdown button
+  String? selectedLabel; // valor seleccionado en el dropdown button
+  int? selectedLabelId; // id de la etiqueta seleccionada en el dropdown button
 
-  const LabelsState({
+  LabelsState({
     this.status = PageStatus.initial,
     this.data = const [],
     this.errorMessage,

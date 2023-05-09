@@ -154,8 +154,7 @@ class AddTaskPage extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const ManageLabelsPage()));
+                                builder: (context) => ManageLabelsPage()));
                       },
                     ),
                   ],

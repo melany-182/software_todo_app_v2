@@ -8,7 +8,7 @@ import 'package:software_todo_app_v2/dto/response_dto.dart';
 import 'package:software_todo_app_v2/services/labels_service.dart';
 
 class LabelsCubit extends Cubit<LabelsState> {
-  LabelsCubit() : super(const LabelsState());
+  LabelsCubit() : super(LabelsState());
 
   Future<void> getLabels() async {
     emit(state.copyWith(status: PageStatus.loading));
