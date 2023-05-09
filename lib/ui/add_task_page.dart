@@ -9,37 +9,24 @@ import 'package:software_todo_app_v2/bloc/tasks_state.dart';
 import 'package:software_todo_app_v2/dto/label_dto.dart';
 import 'package:software_todo_app_v2/dto/task_dto.dart';
 import 'package:software_todo_app_v2/ui/manage_labels_page.dart';
-import 'package:software_todo_app_v2/ui/menu_page.dart';
 
 class AddTaskPage extends StatelessWidget {
   AddTaskPage({Key? key}) : super(key: key);
 
-  final tasksCubit = TasksCubit();
-  final labelsCubit = LabelsCubit();
   final taskNameInput = TextEditingController();
   final deadlineInput = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    tasksCubit.tasks(); // obtención de las tareas mediante el cubit
-    labelsCubit.labels(); // obtención de las etiquetas mediante el cubit
+    BlocProvider.of<LabelsCubit>(context)
+        .getLabels(); // obtención de las etiquetas mediante el cubit
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registrar Nueva Tarea'),
       ),
       body: BlocConsumer<TasksCubit, TasksState>(
-        bloc: tasksCubit,
         listener: (context, state) {
-          if (tasksCubit.state.status == PageStatus.success &&
-              tasksCubit.state.addTaskSuccess == true) {
-            // si el cubit verifica que la tarea se guardó correctamente, se vuelve a la página anterior
-            // Navigator.pop(context); // FIXME: al hacer pop, se vuelve a la página anterior, pero no se actualiza la lista de tareas
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => MenuPage()),
-                (route) => route.isFirst);
-          } else if (tasksCubit.state.status == PageStatus.failure &&
-              tasksCubit.state.addTaskSuccess == false) {
+          if (state.status == PageStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content:
@@ -102,9 +89,8 @@ class AddTaskPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     BlocConsumer<LabelsCubit, LabelsState>(
-                      bloc: labelsCubit,
                       listener: (context, state) {
-                        if (labelsCubit.state.status == PageStatus.failure) {
+                        if (state.status == PageStatus.failure) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
@@ -114,13 +100,12 @@ class AddTaskPage extends StatelessWidget {
                         }
                       },
                       builder: (context, state) {
-                        if (labelsCubit.state.status == PageStatus.loading) {
+                        if (state.status == PageStatus.loading) {
                           return const Center(
                             child: CircularProgressIndicator(),
                           );
                         } else {
-                          String? selectedLabel =
-                              labelsCubit.state.selectedLabel;
+                          String? selectedLabel = state.selectedLabel;
                           return Expanded(
                             child: DropdownButtonFormField<String>(
                               hint: const Text('Seleccionar etiqueta'),
@@ -139,15 +124,14 @@ class AddTaskPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(5.0),
                                 ),
                               ),
-                              value: labelsCubit.state.data.isNotEmpty
-                                  ? selectedLabel
-                                  : null,
+                              value:
+                                  state.data.isNotEmpty ? selectedLabel : null,
                               onChanged: (newValue) {
-                                labelsCubit.selectLabel(newValue!);
+                                BlocProvider.of<LabelsCubit>(context)
+                                    .selectLabel(newValue!);
                                 // debugPrint("Se seleccionó la etiqueta $newValue");
                               },
-                              items: labelsCubit.state.data
-                                  .map<DropdownMenuItem<String>>(
+                              items: state.data.map<DropdownMenuItem<String>>(
                                 (LabelDto value) {
                                   return DropdownMenuItem<String>(
                                     value: value.name,
@@ -170,7 +154,8 @@ class AddTaskPage extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ManageLabelsPage()));
+                                builder: (context) =>
+                                    const ManageLabelsPage()));
                       },
                     ),
                   ],
@@ -181,7 +166,6 @@ class AddTaskPage extends StatelessWidget {
         },
       ),
       bottomNavigationBar: BlocBuilder<TasksCubit, TasksState>(
-        bloc: tasksCubit,
         builder: (context, state) {
           return BottomAppBar(
             padding: const EdgeInsets.all(25),
@@ -199,25 +183,30 @@ class AddTaskPage extends StatelessWidget {
                 state.status == PageStatus.loading
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
-                        // función que se ejecutará al apretar el botón Guardar, agregará la tarea
-                        onPressed: tasksCubit.state.status == PageStatus.loading
+                        // función que se ejecutará al apretar el botón Guardar, guardará la tarea
+                        onPressed: state.status == PageStatus.loading
                             ? null
                             : () {
                                 if (taskNameInput.text != "" &&
                                     deadlineInput.text != "" &&
-                                    labelsCubit.state.selectedLabel != null) {
+                                    BlocProvider.of<LabelsCubit>(context)
+                                            .state
+                                            .selectedLabel !=
+                                        null) {
                                   // si el nombre de la tarea, la fecha de cumplimiento y la etiqueta no están vacíos
                                   TaskDto newTask = TaskDto(
                                     taskId: 0,
                                     description: taskNameInput.text,
                                     deadline: deadlineInput.text,
-                                    labelId: labelsCubit.state.selectedLabelId!,
+                                    labelId:
+                                        BlocProvider.of<LabelsCubit>(context)
+                                            .state
+                                            .selectedLabelId!,
                                     state: "",
                                   );
-                                  // se llama al cubit para que ejecute la función de agregar la tarea
-                                  tasksCubit.addTask(newTask);
-                                  // se actualiza la lista de tareas
-                                  tasksCubit.tasks();
+                                  // se llama al cubit para que ejecute la función de agregar tarea
+                                  context.read<TasksCubit>().addTask(newTask);
+                                  Navigator.pop(context);
                                 } else {
                                   showDialog(
                                     context: context,

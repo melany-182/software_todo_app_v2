@@ -10,7 +10,7 @@ import 'package:software_todo_app_v2/services/labels_service.dart';
 class LabelsCubit extends Cubit<LabelsState> {
   LabelsCubit() : super(const LabelsState());
 
-  Future<void> labels() async {
+  Future<void> getLabels() async {
     emit(state.copyWith(status: PageStatus.loading));
     const storage = FlutterSecureStorage();
     String? token = await storage.read(key: "Token");
@@ -37,13 +37,12 @@ class LabelsCubit extends Cubit<LabelsState> {
       debugPrint("response (aquí, add label cubit): ${response.toJson()}");
       emit(state.copyWith(
         status: PageStatus.success,
-        addLabelSuccess: true,
-        // data: await LabelsService.getLabelsList(token), // actualización de la lista de etiquetas ***
+        data: await LabelsService.getLabelsList(
+            token), // actualización de la lista de etiquetas // esto es importante
       ));
     } on Exception catch (e) {
       emit(state.copyWith(
         status: PageStatus.failure,
-        addLabelSuccess: false,
         errorMessage: e.toString(),
       ));
     }
@@ -59,13 +58,12 @@ class LabelsCubit extends Cubit<LabelsState> {
       debugPrint("response (aquí, update label cubit): ${response.toJson()}");
       emit(state.copyWith(
         status: PageStatus.success,
-        updateLabelSuccess: true,
-        // data: await TodoService.getTasksList(token), // actualización de la lista de tareas ***
+        data: await LabelsService.getLabelsList(
+            token), // actualización de la lista de etiquetas // esto es importante
       ));
     } on Exception catch (e) {
       emit(state.copyWith(
         status: PageStatus.failure,
-        updateLabelSuccess: false,
         errorMessage: e.toString(),
       ));
     }
@@ -81,13 +79,13 @@ class LabelsCubit extends Cubit<LabelsState> {
       debugPrint("response (aquí, delete label cubit): ${response.toJson()}");
       emit(state.copyWith(
         status: PageStatus.success,
-        deleteLabelSuccess: true,
+        data: await LabelsService.getLabelsList(
+            token), // actualización de la lista de etiquetas // esto es importante
       ));
     } catch (e) {
       emit(state.copyWith(
         status: PageStatus.failure,
         errorMessage: e.toString(),
-        deleteLabelSuccess: false,
       ));
     }
   }
@@ -105,11 +103,10 @@ class LabelsCubit extends Cubit<LabelsState> {
   // para el dropdown button
   LabelDto identifyLabelByName(String labelName) {
     List<LabelDto> labels = state.data;
-    LabelDto label =
-        LabelDto(labelId: 1, name: 'Universidad'); // FIXME: temporal
+    LabelDto label = LabelDto(labelId: 0, name: '');
     for (int i = 0; i < labels.length; i++) {
       if (labels[i].name.toString() == labelName) {
-        debugPrint("etiqueta encontrada: ${labels[i].name.toString()}");
+        // debugPrint("etiqueta encontrada: ${labels[i].name.toString()}");
         label = labels[i];
         break;
       }

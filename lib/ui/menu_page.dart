@@ -9,23 +9,21 @@ import 'package:software_todo_app_v2/dto/task_dto.dart';
 import 'package:software_todo_app_v2/ui/add_task_page.dart';
 
 class MenuPage extends StatelessWidget {
-  MenuPage({Key? key}) : super(key: key);
-
-  final tasksCubit = TasksCubit();
-  final labelsCubit = LabelsCubit();
+  const MenuPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    tasksCubit.tasks(); // obtención de las tareas a través del cubit
-    labelsCubit.labels(); // obtención de las etiquetas a través del cubit
+    BlocProvider.of<TasksCubit>(context)
+        .getTasks(); // obtención de las tareas mediante el cubit
+    BlocProvider.of<LabelsCubit>(context)
+        .getLabels(); // obtención de las etiquetas mediante el cubit
     return Scaffold(
       appBar: AppBar(
         title: const Text('Todo App'),
       ),
       body: BlocConsumer<TasksCubit, TasksState>(
-        bloc: tasksCubit,
         listener: (context, state) {
-          if (tasksCubit.state.status == PageStatus.failure) {
+          if (state.status == PageStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
@@ -35,24 +33,24 @@ class MenuPage extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          if (tasksCubit.state.status == PageStatus.loading) {
+          if (state.status == PageStatus.loading) {
             return const Center(
               child: CircularProgressIndicator(),
             );
-          } else if (tasksCubit.state.data.isNotEmpty) {
+          } else if (state.data.isNotEmpty) {
             return Container(
               padding: const EdgeInsets.all(25),
               child: ListView.builder(
-                itemCount: tasksCubit.state.data.length,
+                itemCount: state.data.length,
                 itemBuilder: (context, index) {
                   String changeStateString = '';
-                  if (tasksCubit.state.data[index].state == 'Pendiente') {
+                  if (state.data[index].state == 'Pendiente') {
                     changeStateString = 'COMPLETAR';
                   } else {
                     changeStateString = 'MARCAR COMO PENDIENTE';
                   }
                   Color stateStringColor = Colors.red;
-                  if (tasksCubit.state.data[index].state == 'Pendiente') {
+                  if (state.data[index].state == 'Pendiente') {
                     stateStringColor = Colors.red;
                   } else {
                     stateStringColor = Colors.green;
@@ -67,7 +65,7 @@ class MenuPage extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                tasksCubit.state.data[index].state,
+                                state.data[index].state,
                                 style: TextStyle(
                                   fontSize: 15,
                                   color: stateStringColor,
@@ -76,7 +74,7 @@ class MenuPage extends StatelessWidget {
                             ],
                           ),
                           Text(
-                            tasksCubit.state.data[index].description,
+                            state.data[index].description,
                             style: const TextStyle(fontSize: 17.5),
                           ),
                         ],
@@ -85,19 +83,19 @@ class MenuPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            tasksCubit.state.data[index].deadline,
+                            state.data[index].deadline,
                             style: const TextStyle(fontSize: 15),
                           ),
                           BlocBuilder<LabelsCubit, LabelsState>(
-                            bloc: labelsCubit,
                             builder: (context, state) {
                               String taskLabel = '';
-                              for (int i = 0;
-                                  i < labelsCubit.state.data.length;
-                                  i++) {
-                                if (tasksCubit.state.data[index].labelId ==
-                                    labelsCubit.state.data[i].labelId) {
-                                  taskLabel = labelsCubit.state.data[i].name;
+                              for (int i = 0; i < state.data.length; i++) {
+                                if (BlocProvider.of<TasksCubit>(context)
+                                        .state
+                                        .data[index]
+                                        .labelId ==
+                                    state.data[i].labelId) {
+                                  taskLabel = state.data[i].name;
                                 }
                               }
                               return Text(
@@ -112,28 +110,21 @@ class MenuPage extends StatelessWidget {
                               GestureDetector(
                                 onTap: () {
                                   String newState = '';
-                                  if (tasksCubit.state.data[index].state ==
-                                      'Pendiente') {
+                                  if (state.data[index].state == 'Pendiente') {
                                     newState = 'Completada';
                                   } else {
                                     newState = 'Pendiente';
                                   }
                                   TaskDto newTask = TaskDto(
-                                      taskId:
-                                          tasksCubit.state.data[index].taskId,
-                                      description: tasksCubit
-                                          .state.data[index].description,
-                                      deadline:
-                                          tasksCubit.state.data[index].deadline,
+                                      taskId: state.data[index].taskId,
+                                      description:
+                                          state.data[index].description,
+                                      deadline: state.data[index].deadline,
                                       state: newState,
-                                      labelId:
-                                          tasksCubit.state.data[index].labelId);
+                                      labelId: state.data[index].labelId);
                                   // se llama al cubit para que ejecute el cambio de estado de la tarea
-                                  tasksCubit.updateTaskById(
-                                      tasksCubit.state.data[index].taskId,
-                                      newTask);
-                                  // se llama al cubit para que actualice la lista de tareas
-                                  tasksCubit.tasks();
+                                  context.read<TasksCubit>().updateTaskById(
+                                      state.data[index].taskId, newTask);
                                 },
                                 child: Text(
                                   changeStateString,

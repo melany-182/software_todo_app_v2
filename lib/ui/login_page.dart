@@ -20,8 +20,8 @@ class LoginPage extends StatelessWidget {
         listener: (context, state) {
           if (state.status == PageStatus.success && state.loginSuccess) {
             // si el cubit verifica que la autenticación fue correcta, se va a la página de menú
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => MenuPage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const MenuPage()));
           } else if (state.status == PageStatus.failure &&
               !state.loginSuccess) {
             // si el cubit verifica que hubo un error en la autenticación, se muestra el error

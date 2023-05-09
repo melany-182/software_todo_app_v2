@@ -6,19 +6,17 @@ import 'package:software_todo_app_v2/bloc/login_state.dart';
 import 'package:software_todo_app_v2/dto/label_dto.dart';
 
 class ManageLabelsPage extends StatelessWidget {
-  ManageLabelsPage({Key? key}) : super(key: key);
-
-  final labelsCubit = LabelsCubit();
+  const ManageLabelsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    labelsCubit.labels(); // obtención de las etiquetas a través del cubit
+    BlocProvider.of<LabelsCubit>(context)
+        .getLabels(); // obtención de las etiquetas mediante el cubit
     return Scaffold(
       appBar: AppBar(
         title: const Text('Gestionar Etiquetas'),
       ),
       body: BlocConsumer<LabelsCubit, LabelsState>(
-        bloc: labelsCubit,
         listener: (context, state) {
           if (state.status == PageStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -57,11 +55,9 @@ class ManageLabelsPage extends StatelessWidget {
                                 labelId: actualLabel.labelId,
                                 name: modifiedValue,
                               );
-                              // se llama al cubit para que ejecute la función de modificar la etiqueta
-                              labelsCubit.updateLabelById(
+                              // se llama al cubit para que ejecute la función de modificar etiqueta
+                              context.read<LabelsCubit>().updateLabelById(
                                   actualLabel.labelId, newLabel);
-                              // se actualiza la lista de etiquetas
-                              labelsCubit.labels();
                             },
                           ),
                         ),
@@ -73,11 +69,10 @@ class ManageLabelsPage extends StatelessWidget {
                           onPressed: state.status == PageStatus.loading
                               ? null
                               : () {
-                                  // se llama al cubit para que ejecute la función de eliminar la etiqueta
-                                  labelsCubit
+                                  // se llama al cubit para que ejecute la función de eliminar etiqueta
+                                  context
+                                      .read<LabelsCubit>()
                                       .deleteLabelById(actualLabel.labelId);
-                                  // se actualiza la lista de etiquetas
-                                  labelsCubit.labels();
                                 },
                         ),
                       ],
@@ -127,8 +122,8 @@ class ManageLabelsPage extends StatelessWidget {
               onPressed: () {
                 LabelDto newLabel =
                     LabelDto(labelId: 0, name: 'Nueva etiqueta');
-                labelsCubit.addLabel(newLabel);
-                labelsCubit.labels();
+                // se llama al cubit para que ejecute la función de añadir etiqueta
+                context.read<LabelsCubit>().addLabel(newLabel);
               },
               child: const Text('Nuevo'),
             ),

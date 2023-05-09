@@ -5,9 +5,6 @@ class LabelsState {
   final PageStatus status;
   final List<LabelDto> data;
   final String? errorMessage;
-  final bool? addLabelSuccess;
-  final bool? updateLabelSuccess;
-  final bool? deleteLabelSuccess;
   final String? selectedLabel; // valor seleccionado en el dropdown button
   final int?
       selectedLabelId; // id de la etiqueta seleccionada en el dropdown button
@@ -16,9 +13,6 @@ class LabelsState {
     this.status = PageStatus.initial,
     this.data = const [],
     this.errorMessage,
-    this.addLabelSuccess = false,
-    this.updateLabelSuccess = false,
-    this.deleteLabelSuccess = false,
     this.selectedLabel,
     this.selectedLabelId,
   });
@@ -27,9 +21,6 @@ class LabelsState {
     PageStatus? status,
     List<LabelDto>? data,
     String? errorMessage,
-    bool? addLabelSuccess,
-    bool? updateLabelSuccess,
-    bool? deleteLabelSuccess,
     String? selectedLabel,
     int? selectedLabelId,
   }) {
@@ -37,9 +28,6 @@ class LabelsState {
       status: status ?? this.status,
       data: data ?? this.data,
       errorMessage: errorMessage ?? this.errorMessage,
-      addLabelSuccess: addLabelSuccess ?? this.addLabelSuccess,
-      updateLabelSuccess: updateLabelSuccess ?? this.updateLabelSuccess,
-      deleteLabelSuccess: deleteLabelSuccess ?? this.deleteLabelSuccess,
       selectedLabel: selectedLabel ?? this.selectedLabel,
       selectedLabelId: selectedLabelId ?? this.selectedLabelId,
     );
@@ -48,9 +36,6 @@ class LabelsState {
   List<Object?> get props => [
         status,
         data,
-        addLabelSuccess,
-        updateLabelSuccess,
-        deleteLabelSuccess,
         errorMessage,
         selectedLabel,
         selectedLabelId,
